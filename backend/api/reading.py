@@ -2,12 +2,15 @@
 from flask import Blueprint, request, jsonify, Response
 from services.tarot_service import TarotService
 from services.spread_recommender import SpreadRecommender
+from services.record_service import RecordService
+from data.spreads import get_spread_by_id
 from utils.validators import validate_question, sanitize_input
 import json
 
 reading_bp = Blueprint('reading', __name__, url_prefix='/api/reading')
 tarot_service = TarotService()
 spread_recommender = SpreadRecommender()
+record_service = RecordService()
 
 
 @reading_bp.route('/draw', methods=['POST'])
@@ -83,14 +86,31 @@ def interpret_cards():
         
         def generate():
             """生成器函数，用于流式返回"""
+            reading_parts = []
             try:
                 for text in tarot_service.get_reading_stream(question, spread_id, cards):
-                    # 使用 SSE 格式
+                    reading_parts.append(text)
                     yield f"data: {json.dumps({'type': 'content', 'text': text})}\n\n"
-                
-                # 发送完成信号
+
+                full_reading = ''.join(reading_parts)
+                spread = get_spread_by_id(spread_id)
+                record_service.save(
+                    record_type='tarot',
+                    request_data={
+                        'question': question,
+                        'spread_id': spread_id,
+                        'spread_name': spread.name if spread else spread_id,
+                        'spread_name_cn': spread.name_cn if spread else spread_id,
+                    },
+                    cards=cards,
+                    reading=full_reading,
+                    endpoint='/api/reading/interpret',
+                    client_ip=request.remote_addr,
+                    user_agent=request.headers.get('User-Agent'),
+                )
+
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
-            
+
             except Exception as e:
                 yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
         

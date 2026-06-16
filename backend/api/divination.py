@@ -1,10 +1,12 @@
 """统一占卜 API"""
 from flask import Blueprint, request, jsonify, Response
 from services.divination_factory import DivinationFactory
+from services.record_service import RecordService
 from utils.validators import sanitize_input
 import json
 
 divination_bp = Blueprint('divination', __name__, url_prefix='/api/divination')
+record_service = RecordService()
 
 
 @divination_bp.route('/types', methods=['GET'])
@@ -76,10 +78,21 @@ def perform_divination():
         
         # 执行占卜（流式返回）
         def generate():
+            reading_parts = []
             try:
                 for text in divination.perform_divination(data):
+                    reading_parts.append(text)
                     yield f"data: {json.dumps({'type': 'content', 'text': text})}\n\n"
-                
+
+                record_service.save(
+                    record_type=divination_type,
+                    request_data=data,
+                    reading=''.join(reading_parts),
+                    endpoint='/api/divination/perform',
+                    client_ip=request.remote_addr,
+                    user_agent=request.headers.get('User-Agent'),
+                )
+
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
             except Exception as e:
                 yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"

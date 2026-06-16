@@ -23,6 +23,8 @@ if __name__ == '__main__':
         print(f"📍 API 地址: http://localhost:5001")
         print(f"🔑 使用模型: {Config.MODEL}")
         print(f"🌐 CORS 允许源: {', '.join(Config.CORS_ORIGINS)}")
+        if Config.RECORDS_ENABLED:
+            print(f"📝 记录保存目录: {Config.RECORDS_DIR}")
         print("\n按 Ctrl+C 停止服务\n")
         
         app.run(

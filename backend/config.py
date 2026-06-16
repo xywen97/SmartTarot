@@ -34,6 +34,13 @@ class Config:
     # LLM 配置
     MAX_TOKENS = int(os.getenv('MAX_TOKENS', '4096'))
     TEMPERATURE = float(os.getenv('TEMPERATURE', '0.7'))
+
+    # 记录配置
+    RECORDS_ENABLED = os.getenv('RECORDS_ENABLED', 'True').lower() == 'true'
+    RECORDS_DIR = os.getenv(
+        'RECORDS_DIR',
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'records'))
+    )
     
     @classmethod
     def validate(cls):
