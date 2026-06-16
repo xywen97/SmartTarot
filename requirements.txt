@@ -5,7 +5,8 @@ Flask==3.0.0
 Flask-CORS==4.0.0
 
 # AI / LLM
-anthropic==0.25.1
+# 使用稳定版本，避免 API 变更问题
+anthropic==0.18.1
 
 # 环境变量管理
 python-dotenv==1.0.0
