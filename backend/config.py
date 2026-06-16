@@ -18,7 +18,18 @@ class Config:
     DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
     
     # CORS 配置
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:8080,http://localhost:3000').split(',')
+    # - 未设置且 DEBUG=True：允许所有来源（clone 即用，无需写 IP）
+    # - 设为 *：允许所有来源
+    # - 其他：逗号分隔的明确域名列表（生产环境推荐）
+    _cors_env = os.getenv('CORS_ORIGINS', '').strip()
+    if _cors_env == '*':
+        CORS_ORIGINS = ['*']
+    elif _cors_env:
+        CORS_ORIGINS = [o.strip() for o in _cors_env.split(',') if o.strip()]
+    elif DEBUG:
+        CORS_ORIGINS = ['*']
+    else:
+        CORS_ORIGINS = ['http://localhost:8080', 'http://localhost:3000']
     
     # LLM 配置
     MAX_TOKENS = int(os.getenv('MAX_TOKENS', '4096'))
