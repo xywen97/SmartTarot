@@ -1,0 +1,14 @@
+# AI 塔罗占卜系统 - Python 依赖
+
+# Web 框架
+Flask==3.0.0
+Flask-CORS==4.0.0
+
+# AI / LLM
+anthropic==0.25.1
+
+# 环境变量管理
+python-dotenv==1.0.0
+
+# WSGI 服务器（生产环境可选）
+gunicorn==21.2.0

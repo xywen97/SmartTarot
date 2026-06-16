@@ -77,20 +77,19 @@ TarotCards/
 
 ## 🚀 快速开始
 
+> 💡 **完整安装指南**: 查看 [INSTALL.md](./INSTALL.md) 获取详细的环境配置和故障排除。
+
 ### 1. 安装依赖
 
 ```bash
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 ```
 
 ### 2. 配置环境变量
 
-复制 `.env.example` 为 `.env`，填写必要的配置：
-
 ```bash
-POLOAI_API_KEY=sk-your-api-key-here
-POLOAI_BASE_URL=https://poloai.top
-MODEL=claude-opus-4-8
+cp .env.example .env
+# 编辑 .env 文件，填写你的 API Key
 ```
 
 ### 3. 启动应用
