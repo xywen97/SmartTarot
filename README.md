@@ -93,34 +93,48 @@ POLOAI_BASE_URL=https://poloai.top
 MODEL=claude-opus-4-8
 ```
 
-### 3. 启动后端服务
+### 3. 启动应用
 
+```bash
+./START.sh
+```
+
+这将自动：
+- ✅ 启动后端服务（http://localhost:5001）
+- ✅ 启动前端服务（http://localhost:8080）
+- ✅ 打开浏览器
+
+### 4. 停止应用
+
+```bash
+./STOP.sh
+```
+
+## 💻 开发模式
+
+如果需要单独启动服务（用于开发调试）：
+
+**启动后端**：
 ```bash
 python3 run.py
 ```
 
-后端将运行在 `http://localhost:5001`
-
-### 4. 启动前端服务
-
-打开新终端：
-
+**启动前端**（新终端）：
 ```bash
 cd frontend
 python3 -m http.server 8080
 ```
-
-前端将运行在 `http://localhost:8080`
-
-### 5. 开始使用
-
-在浏览器中访问 `http://localhost:8080`
 
 ## 🔧 API 端点
 
 ### 占卜相关
 - `POST /api/reading/draw` - 抽牌
 - `POST /api/reading/interpret` - 获取解读（流式）
+- `POST /api/reading/recommend-spread` - 智能推荐牌阵
+
+### 多种占卜方式
+- `GET /api/divination/types` - 获取所有占卜方式
+- `POST /api/divination/perform` - 执行占卜（统一接口）
 
 ### 数据相关
 - `GET /api/data/deck` - 获取塔罗牌库
