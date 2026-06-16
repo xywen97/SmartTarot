@@ -83,6 +83,10 @@ def interpret_cards():
                 'success': False,
                 'error': '未提供卡牌信息'
             }), 400
+
+        # 流式 generator 在请求上下文外执行，需提前捕获 request 信息
+        client_ip = request.remote_addr
+        user_agent = request.headers.get('User-Agent')
         
         def generate():
             """生成器函数，用于流式返回"""
@@ -105,8 +109,8 @@ def interpret_cards():
                     cards=cards,
                     reading=full_reading,
                     endpoint='/api/reading/interpret',
-                    client_ip=request.remote_addr,
-                    user_agent=request.headers.get('User-Agent'),
+                    client_ip=client_ip,
+                    user_agent=user_agent,
                 )
 
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"

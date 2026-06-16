@@ -75,6 +75,9 @@ def perform_divination():
                 'success': False,
                 'error': error_msg
             }), 400
+
+        client_ip = request.remote_addr
+        user_agent = request.headers.get('User-Agent')
         
         # 执行占卜（流式返回）
         def generate():
@@ -89,8 +92,8 @@ def perform_divination():
                     request_data=data,
                     reading=''.join(reading_parts),
                     endpoint='/api/divination/perform',
-                    client_ip=request.remote_addr,
-                    user_agent=request.headers.get('User-Agent'),
+                    client_ip=client_ip,
+                    user_agent=user_agent,
                 )
 
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
