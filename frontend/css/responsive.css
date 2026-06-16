@@ -1,0 +1,203 @@
+/* 响应式样式 - 适配三栏布局 */
+
+/* 大屏幕优化 */
+@media (min-width: 1400px) {
+  main {
+    padding: 0 40px 40px 40px;
+    gap: 30px;
+  }
+  
+  .section {
+    padding: 30px;
+  }
+}
+
+/* 平板 - 改为两栏 */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  main {
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto 1fr;
+    gap: 15px;
+  }
+  
+  #question-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  #cards-section {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  #reading-section {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+  
+  .card {
+    width: 140px;
+    height: 230px;
+  }
+}
+
+/* 平板竖屏和小屏幕 - 改为单栏堆叠 */
+@media (max-width: 768px) {
+  .app-container {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  header {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  main {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    padding: 0 15px 15px 15px;
+    gap: 15px;
+    overflow: visible;
+  }
+  
+  .section {
+    padding: 20px;
+    height: auto;
+    min-height: 200px;
+  }
+  
+  .section h2 {
+    font-size: 1.3rem;
+  }
+  
+  #question-input {
+    min-height: 120px;
+    font-size: 0.95rem;
+  }
+  
+  .card {
+    width: 160px;
+    height: 260px;
+  }
+  
+  .cards-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .reading-output {
+    font-size: 0.95rem;
+    max-height: none;
+  }
+  
+  .reading-output h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* 手机 */
+@media (max-width: 480px) {
+  header {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
+  main {
+    padding: 0 10px 10px 10px;
+    gap: 10px;
+  }
+  
+  .section {
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  
+  #question-input {
+    min-height: 100px;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .card {
+    width: 130px;
+    height: 210px;
+    padding: 12px;
+  }
+  
+  .card-name {
+    font-size: 1rem;
+  }
+  
+  .card-name-en {
+    font-size: 0.75rem;
+  }
+  
+  .card-keywords {
+    font-size: 0.75rem;
+  }
+  
+  .reading-output {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .reading-output h2 {
+    font-size: 1.1rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 2rem;
+  }
+  
+  .empty-state-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* 超小屏幕 */
+@media (max-width: 360px) {
+  .card {
+    width: 110px;
+    height: 180px;
+    padding: 10px;
+  }
+  
+  .card-name {
+    font-size: 0.9rem;
+  }
+  
+  .card-name-en {
+    font-size: 0.7rem;
+  }
+}

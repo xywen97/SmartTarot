@@ -1,0 +1,182 @@
+/* 布局样式 - 三栏布局 */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* 主内容区 - 三栏布局 */
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-rows: 1fr;
+  gap: 20px;
+  padding: 0 20px 20px 20px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 左上 - 问题输入区 */
+#question-section {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 左下 - 卡牌展示区 */
+#cards-section {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 右侧 - 解读结果区 */
+#reading-section {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  background: var(--color-bg-secondary);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid var(--color-accent-primary);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.section h2 {
+  font-family: var(--font-display);
+  color: var(--color-gold);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* 问题输入区内容 */
+.question-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#question-input {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  resize: none;
+  margin-bottom: 15px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 卡牌展示区内容 */
+.cards-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: auto;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+}
+
+/* 解读结果区内容 */
+.reading-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.reading-output {
+  flex: 1;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 1rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 空状态提示 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 0.9rem;
+  font-style: italic;
+}

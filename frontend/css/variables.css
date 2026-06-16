@@ -1,0 +1,29 @@
+/* CSS 变量定义 */
+:root {
+  /* 神秘塔罗主题 */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #1a1a2e;
+  --color-bg-card: #16213e;
+  
+  --color-accent-primary: #9d4edd;    /* 紫色 - 神秘 */
+  --color-accent-secondary: #f72585;  /* 品红 - 能量 */
+  --color-gold: #ffd700;              /* 金色 - 强调 */
+  --color-silver: #c0c0c0;            /* 银色 - 次级 */
+  
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #666;
+  
+  /* 动画参数 */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.4s ease;
+  --transition-slow: 0.8s ease;
+  
+  /* 阴影 */
+  --shadow-glow: 0 0 20px rgba(157, 78, 221, 0.5);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+  
+  /* 字体 */
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Crimson Text', serif;
+}

@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+
+# 备份
+*.bak
+*-old.*
+
+# 数据库（如果使用）
+*.db
+*.sqlite
+*.sqlite3

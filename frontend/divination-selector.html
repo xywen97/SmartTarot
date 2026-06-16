@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>选择占卜方式 - AI 占卜系统</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <style>
+    .selector-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    .selector-title {
+      font-size: 2.5rem;
+      color: var(--color-gold);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .selector-subtitle {
+      color: var(--color-text-secondary);
+      margin-bottom: 50px;
+      text-align: center;
+    }
+    
+    .divination-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      width: 100%;
+    }
+    
+    .divination-card {
+      background: var(--color-bg-card);
+      border: 2px solid var(--color-accent-primary);
+      border-radius: 15px;
+      padding: 30px;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .divination-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-glow);
+      border-color: var(--color-gold);
+    }
+    
+    .divination-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .divination-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-gold);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .divination-desc {
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      text-align: center;
+    }
+    
+    .badge {
+      display: inline-block;
+      background: var(--color-accent-primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 主题切换按钮 -->
+  <button class="theme-toggle" id="theme-toggle" title="切换主题">☀️</button>
+
+  <div class="selector-container">
+    <h1 class="selector-title">🔮 选择占卜方式 🔮</h1>
+    <p class="selector-subtitle">探索命运的多种途径</p>
+
+    <div class="divination-grid">
+      <a href="index.html" class="divination-card">
+        <div class="divination-icon">🌙</div>
+        <h2 class="divination-name">
+          塔罗占卜
+          <span class="badge">推荐</span>
+        </h2>
+        <p class="divination-desc">
+          使用78张塔罗牌进行占卜，洞察过去、现在和未来。
+          支持多种牌阵，配备 Tarot Skills 智能解读。
+        </p>
+      </a>
+
+      <a href="birthday.html" class="divination-card">
+        <div class="divination-icon">🎂</div>
+        <h2 class="divination-name">
+          生辰八字
+          <span class="badge" style="background: var(--color-accent-secondary);">NEW</span>
+        </h2>
+        <p class="divination-desc">
+          根据出生年月日时分析五行八字，预测事业、财运、感情、健康运势。
+        </p>
+      </a>
+
+      <a href="dream.html" class="divination-card">
+        <div class="divination-icon">💭</div>
+        <h2 class="divination-name">
+          周公解梦
+          <span class="badge" style="background: var(--color-accent-secondary);">NEW</span>
+        </h2>
+        <p class="divination-desc">
+          解析梦境含义，探索潜意识的信息，理解内心深处的声音。
+        </p>
+      </a>
+    </div>
+
+    <p style="margin-top: 50px; color: var(--color-text-muted); font-size: 0.9rem;">
+      更多占卜方式即将推出...
+    </p>
+  </div>
+
+  <script type="module">
+    import { initTheme, toggleTheme } from './js/utils/theme.js';
+    
+    // 初始化主题
+    initTheme();
+    
+    // 主题切换
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+  </script>
+</body>
+</html>
