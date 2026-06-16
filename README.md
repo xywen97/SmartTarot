@@ -204,6 +204,60 @@ python3 -m http.server 8080
 
 查看 [完整文档列表](./docs/INDEX.md) 了解项目的方方面面。
 
+## 🙏 致谢
+
+本项目在开发过程中借鉴了多个优秀开源项目的设计理念和实现思路：
+
+### 核心灵感来源
+
+#### [tarot-skills](https://github.com/vasilakisfil/tarot-skills) ⭐ 2
+- **借鉴内容**: Tarot Skills 框架的核心理念
+- **应用方式**: 将 22 张大阿尔卡纳转化为 LLM 行为校正工具
+- **创新点**: 从概念性 CLI 工具发展为完整的后端+前端集成系统
+
+#### [AI-Tarot-Reader](https://github.com/search?q=AI-Tarot-Reader) ⭐ 4-8
+- **借鉴内容**: 智能牌阵推荐的思路
+- **应用方式**: 使用 Claude API 分析问题并推荐最合适的牌阵
+- **创新点**: 添加了置信度评分和详细推荐理由
+
+#### [tarot-api](https://github.com/ekelen/tarot-api) ⭐ 388
+- **借鉴内容**: 完整的塔罗牌数据结构和占星学元数据
+- **应用方式**: 78 张塔罗牌的详细信息、占星学对应关系
+- **创新点**: 整合了中文翻译和自定义的数秘学含义
+
+#### [chat-gpt-tarot-divination](https://github.com/search?q=chat-gpt-tarot) ⭐ 804
+- **借鉴内容**: 
+  - Prompt 注入防护机制
+  - 主题切换功能
+  - 加载动画设计
+  - 多种占卜方式的工厂模式
+- **应用方式**: 根据我们的技术栈（Flask + ES6）重新实现
+- **创新点**: 增强的安全验证、更精美的动画效果
+
+#### [usongon/ai-tarot-reader](https://github.com/usongon/ai-tarot-reader)
+- **借鉴内容**: 分享卡片功能的技术选型
+- **应用方式**: 使用 html2canvas 生成精美的分享卡片
+- **创新点**: 三种分享方式（下载、复制、分享），原创的卡片设计
+
+### 技术栈
+
+- **[Flask](https://flask.palletsprojects.com/)** - Python Web 框架
+- **[Claude API](https://www.anthropic.com/)** - AI 驱动的解读引擎
+- **[html2canvas](https://html2canvas.hertzen.com/)** - 前端截图库
+
+### 特别说明
+
+- 所有代码均为**原创实现**，没有直接复制任何开源项目的代码
+- 我们学习了这些项目的**设计理念**和**技术思路**，然后根据自己的架构重新实现
+- 在这些优秀项目的基础上，我们加入了大量**原创设计**和**功能创新**
+- 塔罗牌图片来源于公有领域的 [Rider-Waite-Smith](https://sacred-texts.com/tarot/pkt/) 塔罗牌
+
+### 开源精神
+
+感谢所有开源贡献者的无私分享！本项目也采用 MIT License，希望能帮助到更多开发者。
+
+如果你觉得本项目有帮助，欢迎 ⭐ Star 支持！
+
 ## 📄 许可证
 
 MIT License
