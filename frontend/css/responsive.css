@@ -107,6 +107,10 @@
   .reading-output h2 {
     font-size: 1.2rem;
   }
+
+  .follow-up-panel {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* 手机 */
@@ -147,6 +151,10 @@
   .btn {
     padding: 10px 20px;
     font-size: 0.95rem;
+  }
+
+  .question-templates {
+    grid-template-columns: 1fr;
   }
   
   .card {

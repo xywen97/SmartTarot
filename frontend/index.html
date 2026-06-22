@@ -51,8 +51,32 @@
               <option value="single">单牌占卜（1张）</option>
               <option value="three_card">三牌阵（3张）</option>
               <option value="celtic_cross">凯尔特十字（10张）</option>
+              <option value="relationship">关系牌阵（5张）</option>
+              <option value="decision">决策牌阵（4张）</option>
+              <option value="monthly">月度展望（7张）</option>
+              <option value="custom">自定义牌阵</option>
             </select>
             <div id="recommend-reason" style="display: none; margin-top: 8px; padding: 8px; background: rgba(157, 78, 221, 0.1); border-radius: 6px; font-size: 0.85rem; color: var(--color-text-secondary);"></div>
+          </div>
+
+          <div class="reader-style-selector">
+            <label for="reader-style-select">解读风格：</label>
+            <select id="reader-style-select">
+              <option value="">经典综合</option>
+              <option value="gentle">温柔支持</option>
+              <option value="direct">直接清醒</option>
+              <option value="psychology">心理洞察</option>
+              <option value="practical">现实行动</option>
+            </select>
+          </div>
+
+          <div class="custom-spread-panel hidden" id="custom-spread-panel">
+            <input type="text" id="custom-spread-name" placeholder="自定义牌阵名称，例如：搬家决策牌阵">
+            <textarea id="custom-spread-positions" placeholder="每行一个位置，例如：
+现状
+选项 A 的机会
+选项 B 的风险
+最适合的行动"></textarea>
           </div>
           
           <textarea id="question-input" placeholder="请输入你想占卜的问题...
@@ -61,9 +85,17 @@
 - 我目前的事业发展如何？
 - 这段感情会有什么结果？
 - 我该如何面对当前的挑战？"></textarea>
+
+          <div class="question-templates" id="question-templates">
+            <button type="button" data-question="这段关系现在真正的问题是什么？">关系</button>
+            <button type="button" data-question="我接下来三个月的事业重点是什么？">事业</button>
+            <button type="button" data-question="面对这个选择，我最需要看清什么？">决策</button>
+            <button type="button" data-question="我最近反复卡住的内在模式是什么？">成长</button>
+          </div>
           
           <div class="button-group">
             <button class="btn" id="draw-btn">开始占卜</button>
+            <button class="btn btn-secondary" id="daily-btn">每日塔罗</button>
             <button class="btn btn-secondary" id="history-btn">历史记录</button>
           </div>
         </div>
@@ -96,6 +128,10 @@
               <div class="empty-state-icon">🔮</div>
               <div class="empty-state-text">AI 解读将在这里显示</div>
             </div>
+          </div>
+          <div class="follow-up-panel hidden" id="follow-up-panel">
+            <textarea id="follow-up-input" placeholder="围绕这次牌面继续追问，例如：我现在最该先做哪一步？"></textarea>
+            <button class="btn btn-secondary btn-small" id="follow-up-btn">继续追问</button>
           </div>
         </div>
       </section>

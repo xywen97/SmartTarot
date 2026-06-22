@@ -44,3 +44,4 @@ logs/
 
 # 占卜记录（服务端持久化，含用户问题）
 records/
+AGENTS.md

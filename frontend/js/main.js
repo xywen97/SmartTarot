@@ -1,8 +1,9 @@
 /**
  * 主入口文件
  */
-import { startReading } from './services/reading.js';
+import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
 import { getHistory, deleteHistory, clearAllHistory } from './services/history.js';
+import { appendText, clearOutput, getOutputText } from './ui/loading.js';
 import { shareReading } from './utils/share.js';
 import { initTheme, toggleTheme } from './utils/theme.js';
 import { showTarotSkillsInfo } from './utils/tarot-skills-info.js';
@@ -12,7 +13,10 @@ import { CONFIG } from './config.js';
 let currentReading = {
   question: '',
   cards: [],
-  reading: ''
+  reading: '',
+  spreadId: '',
+  customSpread: null,
+  readerStyle: ''
 };
 
 /**
@@ -46,6 +50,11 @@ function setupEventListeners() {
     drawBtn.addEventListener('click', handleDrawClick);
   }
 
+  const dailyBtn = document.getElementById('daily-btn');
+  if (dailyBtn) {
+    dailyBtn.addEventListener('click', handleDailyClick);
+  }
+
   // 分享按钮
   const shareBtn = document.getElementById('share-btn');
   if (shareBtn) {
@@ -56,6 +65,24 @@ function setupEventListeners() {
   const recommendBtn = document.getElementById('recommend-btn');
   if (recommendBtn) {
     recommendBtn.addEventListener('click', handleRecommendClick);
+  }
+
+  const spreadSelect = document.getElementById('spread-select');
+  if (spreadSelect) {
+    spreadSelect.addEventListener('change', handleSpreadChange);
+  }
+
+  document.querySelectorAll('#question-templates button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const questionInput = document.getElementById('question-input');
+      questionInput.value = button.dataset.question;
+      questionInput.focus();
+    });
+  });
+
+  const followUpBtn = document.getElementById('follow-up-btn');
+  if (followUpBtn) {
+    followUpBtn.addEventListener('click', handleFollowUpClick);
   }
 
   // Tarot Skills 信息按钮
@@ -109,6 +136,51 @@ function setupEventListeners() {
   }
 }
 
+function getReaderStyle() {
+  return document.getElementById('reader-style-select')?.value || '';
+}
+
+function getCustomSpread() {
+  const spreadSelect = document.getElementById('spread-select');
+  if (!spreadSelect || spreadSelect.value !== 'custom') {
+    return null;
+  }
+
+  const name = document.getElementById('custom-spread-name').value.trim() || '自定义牌阵';
+  const positionLines = document.getElementById('custom-spread-positions').value
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  if (positionLines.length < 1 || positionLines.length > 10) {
+    throw new Error('自定义牌阵需要 1-10 个位置');
+  }
+
+  return {
+    name,
+    description: '用户根据当前问题创建的自定义牌阵',
+    positions: positionLines.map(line => ({
+      name: line,
+      description: line
+    }))
+  };
+}
+
+function handleSpreadChange() {
+  const panel = document.getElementById('custom-spread-panel');
+  const spreadSelect = document.getElementById('spread-select');
+  if (!panel || !spreadSelect) return;
+
+  panel.classList.toggle('hidden', spreadSelect.value !== 'custom');
+}
+
+function activateFollowUpPanel() {
+  const panel = document.getElementById('follow-up-panel');
+  if (panel) {
+    panel.classList.remove('hidden');
+  }
+}
+
 /**
  * 处理抽牌点击
  */
@@ -124,6 +196,14 @@ async function handleDrawClick() {
   // 获取选择的牌阵
   const spreadSelect = document.getElementById('spread-select');
   const spreadId = spreadSelect.value;
+  let customSpread = null;
+
+  try {
+    customSpread = getCustomSpread();
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
   
   const drawBtn = document.getElementById('draw-btn');
   const shareBtn = document.getElementById('share-btn');
@@ -137,17 +217,24 @@ async function handleDrawClick() {
   
   try {
     // 开始占卜
-    const result = await startReading(question, spreadId);
+    const result = await startReading(question, {
+      spreadId,
+      customSpread,
+      readerStyle: getReaderStyle()
+    });
     
     if (result.success) {
       // 保存当前占卜结果
       currentReading.question = question;
       currentReading.cards = result.cards;
-      
+      currentReading.spreadId = result.spreadId;
+      currentReading.customSpread = result.customSpread;
+      currentReading.readerStyle = result.readerStyle;
+
       // 等待解读完成后获取文本
       setTimeout(() => {
-        const output = document.getElementById('reading-output');
-        currentReading.reading = output.textContent;
+        currentReading.reading = getOutputText();
+        activateFollowUpPanel();
         
         // 显示分享按钮
         shareBtn.style.display = 'block';
@@ -159,6 +246,46 @@ async function handleDrawClick() {
     // 恢复按钮
     drawBtn.disabled = false;
     drawBtn.textContent = '开始占卜';
+  }
+}
+
+async function handleDailyClick() {
+  const questionInput = document.getElementById('question-input');
+  const focus = questionInput.value.trim();
+  const dailyBtn = document.getElementById('daily-btn');
+  const shareBtn = document.getElementById('share-btn');
+
+  shareBtn.style.display = 'none';
+  dailyBtn.disabled = true;
+  dailyBtn.textContent = '抽取中...';
+
+  try {
+    const result = await startDailyTarot(focus, {
+      readerStyle: getReaderStyle()
+    });
+
+    if (result.success) {
+      currentReading.question = focus || '每日塔罗';
+      currentReading.cards = result.cards;
+      currentReading.spreadId = result.spreadId;
+      currentReading.customSpread = {
+        name: '每日塔罗',
+        description: '今天的核心能量、机会、挑战与行动提醒',
+        positions: [{ name: '今日能量', description: '今天最值得留意的核心能量' }]
+      };
+      currentReading.readerStyle = result.readerStyle;
+
+      setTimeout(() => {
+        currentReading.reading = getOutputText();
+        activateFollowUpPanel();
+        shareBtn.style.display = 'block';
+      }, 500);
+    }
+  } catch (error) {
+    console.error('每日塔罗失败:', error);
+  } finally {
+    dailyBtn.disabled = false;
+    dailyBtn.textContent = '每日塔罗';
   }
 }
 
@@ -176,6 +303,50 @@ async function handleShareClick() {
     currentReading.cards,
     currentReading.reading
   );
+}
+
+async function handleFollowUpClick() {
+  const input = document.getElementById('follow-up-input');
+  const button = document.getElementById('follow-up-btn');
+  const question = input.value.trim();
+
+  if (!currentReading.question || !currentReading.cards.length || !currentReading.reading) {
+    alert('请先完成一次占卜');
+    return;
+  }
+
+  if (!currentReading.cards.every(card => card.upright && card.reversed)) {
+    alert('这条旧历史记录缺少完整牌义上下文，无法继续追问。请重新占卜后再追问。');
+    return;
+  }
+
+  if (!question) {
+    alert('请输入追问内容');
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = '追问中...';
+
+  const output = document.getElementById('reading-output');
+  const prefix = `\n\n## 追问：${question}\n\n`;
+  const previousReading = currentReading.reading;
+  appendText(prefix);
+  currentReading.reading += prefix;
+
+  try {
+    await askFollowUp({ ...currentReading, reading: previousReading }, question, (text) => {
+      appendText(text);
+      currentReading.reading += text;
+      output.scrollTop = output.scrollHeight;
+    });
+    input.value = '';
+  } catch (error) {
+    console.error('追问失败:', error);
+  } finally {
+    button.disabled = false;
+    button.textContent = '继续追问';
+  }
 }
 
 /**
@@ -347,16 +518,20 @@ window.viewHistory = function(id) {
     document.getElementById('question-input').value = item.question;
     
     // 显示解读
-    const output = document.getElementById('reading-output');
-    output.textContent = item.reading;
+    clearOutput();
+    appendText(item.reading);
     
     // 更新当前占卜结果（用于分享）
     currentReading.question = item.question;
-    currentReading.cards = item.cards;
+    currentReading.cards = item.rawCards || item.cards;
     currentReading.reading = item.reading;
+    currentReading.spreadId = item.spreadId;
+    currentReading.customSpread = item.customSpread || null;
+    currentReading.readerStyle = item.readerStyle || '';
     
     // 显示分享按钮
     document.getElementById('share-btn').style.display = 'block';
+    activateFollowUpPanel();
     
     // 关闭模态框
     hideHistoryModal();

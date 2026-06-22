@@ -68,6 +68,52 @@ SPREADS = {
             {'name': '希望与恐惧', 'description': '内心的期待和担忧'},
             {'name': '结果', 'description': '最终的发展方向'}
         ]
+    ),
+
+    'relationship': Spread(
+        id='relationship',
+        name='Relationship Spread',
+        name_cn='关系牌阵',
+        description='观察双方状态、互动模式与关系建议',
+        cards=5,
+        positions=[
+            {'name': '我的状态', 'description': '我在这段关系中的真实状态'},
+            {'name': '对方状态', 'description': '对方当前的态度与能量'},
+            {'name': '关系核心', 'description': '双方互动的关键主题'},
+            {'name': '隐藏影响', 'description': '尚未被看见的阻碍或助力'},
+            {'name': '行动建议', 'description': '下一步最值得采取的做法'}
+        ]
+    ),
+
+    'decision': Spread(
+        id='decision',
+        name='Decision Spread',
+        name_cn='决策牌阵',
+        description='比较选择、风险与最稳妥的行动方向',
+        cards=4,
+        positions=[
+            {'name': '选项 A', 'description': '第一个选择的潜力与代价'},
+            {'name': '选项 B', 'description': '第二个选择的潜力与代价'},
+            {'name': '关键风险', 'description': '决策中最容易忽略的问题'},
+            {'name': '建议方向', 'description': '更适合当前处境的行动策略'}
+        ]
+    ),
+
+    'monthly': Spread(
+        id='monthly',
+        name='Monthly Outlook',
+        name_cn='月度展望',
+        description='梳理未来一个月的主题、挑战与机会',
+        cards=7,
+        positions=[
+            {'name': '本月主题', 'description': '这个月最重要的核心能量'},
+            {'name': '事业学业', 'description': '工作、学习或长期目标的发展'},
+            {'name': '关系互动', 'description': '亲密关系、人际与合作状态'},
+            {'name': '财务资源', 'description': '金钱、资源与现实支持'},
+            {'name': '内在状态', 'description': '情绪、信念与身心状态'},
+            {'name': '机会窗口', 'description': '值得把握的机会'},
+            {'name': '本月建议', 'description': '最重要的行动提醒'}
+        ]
     )
 }
 

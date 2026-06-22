@@ -110,8 +110,13 @@ main {
 
 .button-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   flex-shrink: 0;
+}
+
+.button-group .btn {
+  flex: 1 1 110px;
 }
 
 /* 卡牌展示区内容 */

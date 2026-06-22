@@ -232,20 +232,23 @@
   margin: 20px 0;
 }
 
-/* 牌阵选择器 */
-.spread-selector {
+/* 牌阵与风格选择器 */
+.spread-selector,
+.reader-style-selector {
   margin-bottom: 15px;
   flex-shrink: 0;
 }
 
-.spread-selector label {
+.spread-selector label,
+.reader-style-selector label {
   display: block;
   color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-bottom: 8px;
 }
 
-#spread-select {
+#spread-select,
+#reader-style-select {
   width: 100%;
   padding: 10px 12px;
   background: var(--color-bg-primary);
@@ -258,14 +261,85 @@
   transition: all var(--transition-fast);
 }
 
-#spread-select:hover {
+#spread-select:hover,
+#reader-style-select:hover {
   border-color: var(--color-gold);
 }
 
-#spread-select:focus {
+#spread-select:focus,
+#reader-style-select:focus {
   outline: none;
   border-color: var(--color-gold);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.custom-spread-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#custom-spread-name,
+#custom-spread-positions,
+#follow-up-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+}
+
+#custom-spread-positions {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.question-templates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.question-templates button {
+  min-height: 34px;
+  padding: 7px 9px;
+  background: rgba(157, 78, 221, 0.12);
+  border: 1px solid rgba(157, 78, 221, 0.45);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all var(--transition-fast);
+}
+
+.question-templates button:hover {
+  border-color: var(--color-gold);
+  color: var(--color-text-primary);
+}
+
+.follow-up-panel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+
+#follow-up-input {
+  min-height: 46px;
+  max-height: 110px;
+  resize: vertical;
+}
+
+.follow-up-panel .btn {
+  width: auto;
+  align-self: stretch;
+  white-space: nowrap;
 }
 
 /* 小按钮 */

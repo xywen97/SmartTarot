@@ -25,7 +25,8 @@ export async function generateShareCard(question, cards, reading) {
     // 构建卡片内容
     const cardNames = cards.map(c => {
       const orientation = c.orientation === 'upright' ? '正位' : '逆位';
-      return `${c.name_cn} (${orientation})`;
+      const name = c.name_cn || c.cardName || c.name || '未知卡牌';
+      return `${name} (${orientation})`;
     }).join('、');
     
     // 截取解读前200字

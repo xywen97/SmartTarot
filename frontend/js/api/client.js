@@ -85,6 +85,8 @@ class APIClient {
               
               if (parsed.type === 'content') {
                 onChunk(parsed.text);
+              } else if (parsed.type === 'cards') {
+                onChunk(parsed);
               } else if (parsed.type === 'done') {
                 if (onDone) onDone();
               } else if (parsed.type === 'error') {

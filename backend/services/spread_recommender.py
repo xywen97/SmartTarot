@@ -32,6 +32,9 @@ class SpreadRecommender:
 1. single - 单牌占卜（1张）：适合快速洞察、简单问题、核心能量
 2. three_card - 三牌阵（3张）：适合分析过去-现在-未来、事态发展、时间线问题
 3. celtic_cross - 凯尔特十字（10张）：适合复杂问题、全面分析、深入探讨
+4. relationship - 关系牌阵（5张）：适合亲密关系、人际互动、合作关系问题
+5. decision - 决策牌阵（4张）：适合二选一、取舍、风险比较、行动方向
+6. monthly - 月度展望（7张）：适合未来一个月的整体规划、事业关系财务综合展望
 
 用户问题：{question}
 
@@ -39,7 +42,7 @@ class SpreadRecommender:
 
 请以JSON格式回复，不要包含任何其他文字：
 {{
-    "spread_id": "推荐的牌阵ID（single/three_card/celtic_cross）",
+    "spread_id": "推荐的牌阵ID（single/three_card/celtic_cross/relationship/decision/monthly）",
     "reason": "推荐理由（50字以内）",
     "confidence": 置信度（0-1之间的数字）
 }}"""
@@ -67,7 +70,7 @@ class SpreadRecommender:
             result = json.loads(result_text)
             
             # 验证结果
-            valid_spreads = ['single', 'three_card', 'celtic_cross']
+            valid_spreads = ['single', 'three_card', 'celtic_cross', 'relationship', 'decision', 'monthly']
             if result['spread_id'] not in valid_spreads:
                 result['spread_id'] = 'single'  # 默认
             

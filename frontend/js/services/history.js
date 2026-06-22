@@ -6,7 +6,7 @@ import { CONFIG } from '../config.js';
 /**
  * 保存历史记录
  */
-export function saveHistory(question, spreadId, cards, reading) {
+export function saveHistory(question, spreadId, cards, reading, metadata = {}) {
   try {
     const history = getHistory();
     
@@ -20,8 +20,12 @@ export function saveHistory(question, spreadId, cards, reading) {
         cardName: c.name_cn,
         orientation: c.orientation
       })),
+      rawCards: cards,
       reading,
-      favorite: false
+      favorite: false,
+      customSpread: metadata.customSpread || null,
+      readerStyle: metadata.readerStyle || '',
+      recordType: metadata.recordType || 'tarot'
     };
     
     history.unshift(record);
