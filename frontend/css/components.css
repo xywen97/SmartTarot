@@ -740,7 +740,11 @@
 #auth-email,
 #auth-password,
 #auth-password-confirm,
-#auth-display-name {
+#auth-display-name,
+#gate-auth-email,
+#gate-auth-password,
+#gate-auth-password-confirm,
+#gate-auth-display-name {
   width: 100%;
   padding: 12px;
   background: var(--color-bg-primary);
@@ -752,6 +756,7 @@
 
 .password-field {
   position: relative;
+  width: 100%;
 }
 
 .password-field input {
@@ -887,6 +892,10 @@ body:not(.is-authenticated) .top-actions {
 .login-gate-brand p {
   color: var(--color-text-secondary);
   line-height: 1.6;
+}
+
+.gate-auth-form {
+  width: 100%;
 }
 
 /* 卡牌 3D 翻转效果 */
