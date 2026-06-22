@@ -3,6 +3,20 @@
  */
 import { CONFIG } from '../config.js';
 
+function getHistoryStorageKey() {
+  try {
+    const userData = localStorage.getItem(CONFIG.STORAGE_KEY_AUTH_USER);
+    if (!userData) {
+      return CONFIG.STORAGE_KEY_HISTORY;
+    }
+
+    const user = JSON.parse(userData);
+    return user?.id ? `${CONFIG.STORAGE_KEY_HISTORY}_${user.id}` : CONFIG.STORAGE_KEY_HISTORY;
+  } catch (e) {
+    return CONFIG.STORAGE_KEY_HISTORY;
+  }
+}
+
 /**
  * 保存历史记录
  */
@@ -36,7 +50,7 @@ export function saveHistory(question, spreadId, cards, reading, metadata = {}) {
       history.length = CONFIG.MAX_HISTORY;
     }
     
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    localStorage.setItem(getHistoryStorageKey(), JSON.stringify(history));
     
     console.log('✅ 历史记录已保存');
   } catch (e) {
@@ -59,7 +73,7 @@ export function updateJournal(id, tags, note) {
     record.tags = tags;
     record.note = note;
     record.updatedAt = Date.now();
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    localStorage.setItem(getHistoryStorageKey(), JSON.stringify(history));
     return true;
   } catch (e) {
     console.error('更新占卜日记失败:', e);
@@ -72,7 +86,7 @@ export function updateJournal(id, tags, note) {
  */
 export function getHistory() {
   try {
-    const data = localStorage.getItem(CONFIG.STORAGE_KEY_HISTORY);
+    const data = localStorage.getItem(getHistoryStorageKey());
     return data ? JSON.parse(data) : [];
   } catch (e) {
     console.error('读取历史记录失败:', e);
@@ -108,12 +122,16 @@ export function mergeHistory(remoteHistory) {
       .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
       .slice(0, CONFIG.MAX_HISTORY);
 
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(merged));
+    localStorage.setItem(getHistoryStorageKey(), JSON.stringify(merged));
     return merged.length;
   } catch (e) {
     console.error('合并云端历史失败:', e);
     return 0;
   }
+}
+
+export function getVisibleHistoryCount() {
+  return getHistory().filter(record => !record.hidden).length;
 }
 
 /**
@@ -122,7 +140,7 @@ export function mergeHistory(remoteHistory) {
 export function deleteHistory(id) {
   try {
     const history = getHistory().filter(r => r.id !== id);
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    localStorage.setItem(getHistoryStorageKey(), JSON.stringify(history));
     console.log('✅ 历史记录已删除');
   } catch (e) {
     console.error('删除历史记录失败:', e);
@@ -139,7 +157,7 @@ export function hideAllHistory() {
       hidden: true,
       hiddenAt: Date.now()
     }));
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    localStorage.setItem(getHistoryStorageKey(), JSON.stringify(history));
     console.log('✅ 所有历史记录已隐藏');
   } catch (e) {
     console.error('隐藏历史记录失败:', e);
@@ -168,7 +186,7 @@ export function toggleFavorite(id) {
     const record = history.find(r => r.id === id);
     if (record) {
       record.favorite = !record.favorite;
-      localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+      localStorage.setItem(getHistoryStorageKey(), JSON.stringify(history));
       console.log(`✅ 收藏状态已切换: ${record.favorite ? '收藏' : '取消收藏'}`);
       return record.favorite;
     }

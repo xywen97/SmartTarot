@@ -2,7 +2,7 @@
  * 主入口文件
  */
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
-import { getHistory, deleteHistory, hideAllHistory, updateJournal } from './services/history.js';
+import { getHistory, getVisibleHistoryCount, deleteHistory, hideAllHistory, updateJournal } from './services/history.js';
 import { getCurrentUser, isLoggedIn, login, logout, register, syncHistory } from './services/auth.js';
 import { appendText, clearOutput, getOutputText } from './ui/loading.js';
 import { shareReading } from './utils/share.js';
@@ -693,7 +693,7 @@ async function handleSyncNow() {
   try {
     const result = await syncHistory();
     renderHistoryList(document.getElementById('history-search')?.value || '');
-    setAuthStatus(`同步完成：上传 ${result.synced} 条，合并 ${result.merged} 条`);
+    setAuthStatus(`同步完成：上传 ${result.synced} 条，合并 ${result.merged} 条，可见 ${getVisibleHistoryCount()} 条`);
   } catch (error) {
     setAuthStatus(error.message || '同步失败');
   } finally {
