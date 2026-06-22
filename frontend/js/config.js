@@ -23,6 +23,8 @@ export const CONFIG = {
 
   // 存储键
   STORAGE_KEY_HISTORY: 'tarot_history',
+  STORAGE_KEY_AUTH_TOKEN: 'tarot_auth_token',
+  STORAGE_KEY_AUTH_USER: 'tarot_auth_user',
   MAX_HISTORY: 100,
 
   // 默认牌阵

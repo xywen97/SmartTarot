@@ -81,6 +81,42 @@ export function getHistory() {
 }
 
 /**
+ * 合并云端历史到本地，按 id 去重。
+ */
+export function mergeHistory(remoteHistory) {
+  try {
+    const localHistory = getHistory();
+    const byId = new Map();
+
+    for (const record of remoteHistory || []) {
+      if (record && record.id) {
+        byId.set(record.id, record);
+      }
+    }
+
+    for (const record of localHistory) {
+      if (!record || !record.id) continue;
+      const remote = byId.get(record.id);
+      byId.set(record.id, {
+        ...remote,
+        ...record,
+        hidden: record.hidden || remote?.hidden || false
+      });
+    }
+
+    const merged = Array.from(byId.values())
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      .slice(0, CONFIG.MAX_HISTORY);
+
+    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(merged));
+    return merged.length;
+  } catch (e) {
+    console.error('合并云端历史失败:', e);
+    return 0;
+  }
+}
+
+/**
  * 删除历史记录
  */
 export function deleteHistory(id) {

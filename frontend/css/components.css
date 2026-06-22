@@ -693,6 +693,91 @@
   margin-top: 16px;
 }
 
+.auth-toggle {
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  z-index: 100;
+  min-width: 70px;
+  padding: 9px 14px;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-glow);
+}
+
+.auth-modal-content {
+  max-width: 520px;
+}
+
+.auth-form-panel,
+.auth-user-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.auth-tabs button {
+  padding: 10px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  color: white;
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+}
+
+#auth-email,
+#auth-password,
+#auth-display-name {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+}
+
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+#auth-user-info {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  padding: 14px;
+}
+
+#auth-user-info strong {
+  color: var(--color-gold);
+}
+
+.auth-status {
+  min-height: 22px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
+
 /* 卡牌 3D 翻转效果 */
 .card-flip-container {
   perspective: 1000px;

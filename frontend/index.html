@@ -20,6 +20,7 @@
 <body>
   <!-- 主题切换按钮 -->
   <button class="theme-toggle" id="theme-toggle" title="切换主题">☀️</button>
+  <button class="auth-toggle" id="auth-toggle" title="登录与云同步">登录</button>
 
   <div class="app-container">
     <header>
@@ -197,6 +198,36 @@
         <div class="journal-actions">
           <button class="btn" id="journal-save">保存日记</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登录与云同步 -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content auth-modal-content">
+      <div class="modal-header">
+        <h2>☁️ 登录与云同步</h2>
+        <button class="modal-close" id="auth-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-user-panel hidden" id="auth-user-panel">
+          <div id="auth-user-info"></div>
+          <div class="auth-actions">
+            <button class="btn" id="sync-now-btn">立即同步</button>
+            <button class="btn btn-secondary" id="logout-btn">退出登录</button>
+          </div>
+        </div>
+        <div class="auth-form-panel" id="auth-form-panel">
+          <div class="auth-tabs">
+            <button class="active" id="auth-login-tab">登录</button>
+            <button id="auth-register-tab">注册</button>
+          </div>
+          <input type="email" id="auth-email" placeholder="邮箱">
+          <input type="password" id="auth-password" placeholder="密码（至少 8 位）">
+          <input type="text" id="auth-display-name" class="hidden" placeholder="昵称">
+          <button class="btn" id="auth-submit">登录</button>
+        </div>
+        <div class="auth-status" id="auth-status"></div>
       </div>
     </div>
   </div>

@@ -5,6 +5,7 @@ import apiClient from '../api/client.js';
 import { renderCards } from '../ui/card.js';
 import { showLoading, clearOutput, appendText, showError, getOutputText } from '../ui/loading.js';
 import { saveHistory } from './history.js';
+import { isLoggedIn, syncHistory } from './auth.js';
 import { CONFIG } from '../config.js';
 
 /**
@@ -48,6 +49,7 @@ export async function startReading(question, options = {}) {
           customSpread,
           readerStyle
         });
+        syncIfLoggedIn();
       },
       // onError
       (error) => {
@@ -93,6 +95,7 @@ export async function startDailyTarot(question = '', options = {}) {
           readerStyle,
           recordType: 'daily'
         });
+        syncIfLoggedIn();
       },
       (error) => {
         showError(error);
@@ -109,6 +112,16 @@ export async function startDailyTarot(question = '', options = {}) {
   } catch (error) {
     showError(error.message);
     return { success: false, error: error.message };
+  }
+}
+
+async function syncIfLoggedIn() {
+  if (!isLoggedIn()) return;
+
+  try {
+    await syncHistory();
+  } catch (error) {
+    console.warn('自动云同步失败:', error);
   }
 }
 

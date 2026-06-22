@@ -41,6 +41,13 @@ class Config:
         'RECORDS_DIR',
         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'records'))
     )
+
+    # 用户与云同步配置
+    DATABASE_PATH = os.getenv(
+        'DATABASE_PATH',
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'instance', 'tarot.db'))
+    )
+    AUTH_TOKEN_MAX_AGE = int(os.getenv('AUTH_TOKEN_MAX_AGE', str(7 * 24 * 60 * 60)))
     
     @classmethod
     def validate(cls):
@@ -49,4 +56,6 @@ class Config:
             raise ValueError("POLOAI_API_KEY 环境变量未设置")
         if not cls.API_BASE_URL:
             raise ValueError("POLOAI_BASE_URL 环境变量未设置")
+        if not cls.DEBUG and cls.SECRET_KEY == 'your-secret-key-here':
+            raise ValueError("生产环境必须设置安全的 SECRET_KEY")
         return True

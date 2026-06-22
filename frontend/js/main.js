@@ -3,6 +3,7 @@
  */
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
 import { getHistory, deleteHistory, hideAllHistory, updateJournal } from './services/history.js';
+import { getCurrentUser, isLoggedIn, login, logout, register, syncHistory } from './services/auth.js';
 import { appendText, clearOutput, getOutputText } from './ui/loading.js';
 import { shareReading } from './utils/share.js';
 import { initTheme, toggleTheme } from './utils/theme.js';
@@ -21,6 +22,7 @@ let currentReading = {
 
 let deckCache = [];
 let activeJournalId = null;
+let authMode = 'login';
 
 /**
  * 初始化应用
@@ -33,6 +35,7 @@ async function init() {
 
   // 设置事件监听器
   setupEventListeners();
+  updateAuthUI();
   
   console.log('✅ 系统已就绪');
 }
@@ -61,6 +64,11 @@ function setupEventListeners() {
   const learnBtn = document.getElementById('learn-btn');
   if (learnBtn) {
     learnBtn.addEventListener('click', showLearnModal);
+  }
+
+  const authToggle = document.getElementById('auth-toggle');
+  if (authToggle) {
+    authToggle.addEventListener('click', showAuthModal);
   }
 
   // 分享按钮
@@ -120,6 +128,11 @@ function setupEventListeners() {
   if (journalClose) {
     journalClose.addEventListener('click', hideJournalModal);
   }
+
+  const authClose = document.getElementById('auth-close');
+  if (authClose) {
+    authClose.addEventListener('click', hideAuthModal);
+  }
   
   // 点击模态框外部关闭
   const historyModal = document.getElementById('history-modal');
@@ -145,6 +158,15 @@ function setupEventListeners() {
     journalModal.addEventListener('click', (e) => {
       if (e.target === journalModal) {
         hideJournalModal();
+      }
+    });
+  }
+
+  const authModal = document.getElementById('auth-modal');
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        hideAuthModal();
       }
     });
   }
@@ -175,6 +197,12 @@ function setupEventListeners() {
   if (journalSave) {
     journalSave.addEventListener('click', handleJournalSave);
   }
+
+  document.getElementById('auth-login-tab')?.addEventListener('click', () => setAuthMode('login'));
+  document.getElementById('auth-register-tab')?.addEventListener('click', () => setAuthMode('register'));
+  document.getElementById('auth-submit')?.addEventListener('click', handleAuthSubmit);
+  document.getElementById('sync-now-btn')?.addEventListener('click', handleSyncNow);
+  document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
   
   // 问题输入框 - Ctrl/Cmd + Enter 快捷键
   const questionInput = document.getElementById('question-input');
@@ -489,6 +517,114 @@ async function showLearnModal() {
 function hideLearnModal() {
   const modal = document.getElementById('learn-modal');
   modal.classList.remove('active');
+}
+
+function showAuthModal() {
+  updateAuthUI();
+  document.getElementById('auth-modal').classList.add('active');
+}
+
+function hideAuthModal() {
+  document.getElementById('auth-modal').classList.remove('active');
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  document.getElementById('auth-login-tab').classList.toggle('active', mode === 'login');
+  document.getElementById('auth-register-tab').classList.toggle('active', mode === 'register');
+  document.getElementById('auth-display-name').classList.toggle('hidden', mode !== 'register');
+  document.getElementById('auth-submit').textContent = mode === 'login' ? '登录' : '注册并同步';
+  setAuthStatus('');
+}
+
+function updateAuthUI() {
+  const user = getCurrentUser();
+  const loggedIn = isLoggedIn();
+  const toggle = document.getElementById('auth-toggle');
+  const userPanel = document.getElementById('auth-user-panel');
+  const formPanel = document.getElementById('auth-form-panel');
+  const userInfo = document.getElementById('auth-user-info');
+
+  if (toggle) {
+    toggle.textContent = loggedIn ? '已登录' : '登录';
+  }
+
+  if (!userPanel || !formPanel || !userInfo) return;
+
+  userPanel.classList.toggle('hidden', !loggedIn);
+  formPanel.classList.toggle('hidden', loggedIn);
+
+  if (loggedIn && user) {
+    userInfo.innerHTML = `
+      <strong>${user.display_name}</strong>
+      <span>${user.email}</span>
+      <small>登录后，本地历史会同步到云端；云端记录会合并回本机。</small>
+    `;
+  }
+}
+
+function setAuthStatus(message) {
+  const status = document.getElementById('auth-status');
+  if (status) {
+    status.textContent = message;
+  }
+}
+
+async function handleAuthSubmit() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const displayName = document.getElementById('auth-display-name').value.trim();
+  const submit = document.getElementById('auth-submit');
+
+  if (!email || !password) {
+    setAuthStatus('请输入邮箱和密码');
+    return;
+  }
+
+  submit.disabled = true;
+  submit.textContent = authMode === 'login' ? '登录中...' : '注册中...';
+  setAuthStatus('正在连接云端...');
+
+  try {
+    if (authMode === 'login') {
+      await login(email, password);
+    } else {
+      await register(email, password, displayName);
+    }
+
+    updateAuthUI();
+    renderHistoryList(document.getElementById('history-search')?.value || '');
+    setAuthStatus('已登录，并完成历史记录同步');
+  } catch (error) {
+    setAuthStatus(error.message || '操作失败');
+  } finally {
+    submit.disabled = false;
+    setAuthMode(authMode);
+  }
+}
+
+async function handleSyncNow() {
+  const button = document.getElementById('sync-now-btn');
+  button.disabled = true;
+  button.textContent = '同步中...';
+  setAuthStatus('正在同步历史记录...');
+
+  try {
+    const result = await syncHistory();
+    renderHistoryList(document.getElementById('history-search')?.value || '');
+    setAuthStatus(`同步完成：上传 ${result.synced} 条，合并 ${result.merged} 条`);
+  } catch (error) {
+    setAuthStatus(error.message || '同步失败');
+  } finally {
+    button.disabled = false;
+    button.textContent = '立即同步';
+  }
+}
+
+function handleLogout() {
+  logout();
+  updateAuthUI();
+  setAuthStatus('已退出登录，本地历史仍保留');
 }
 
 function showJournalModal(id) {
