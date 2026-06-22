@@ -59,6 +59,7 @@ export function clearOutput() {
  */
 export function resetOutput() {
   const output = document.getElementById('reading-output');
+  getRenderer().clear();
   output.innerHTML = `
     <div class="empty-state">
       <div class="empty-state-icon">🔮</div>

@@ -2,23 +2,17 @@
  * 主入口文件
  */
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
-import { getHistory, getVisibleHistoryCount, deleteHistory, hideAllHistory, updateJournal } from './services/history.js';
+import { getHistory, getVisibleHistoryCount, deleteHistory, hideAllHistory, updateJournal, toggleFavorite as toggleHistoryFavorite } from './services/history.js';
 import { getCurrentUser, isLoggedIn, login, logout, register, syncHistory } from './services/auth.js';
-import { appendText, clearOutput, getOutputText } from './ui/loading.js';
+import { appendText, clearOutput, getOutputText, resetOutput } from './ui/loading.js';
+import { clearCards } from './ui/card.js';
 import { shareReading } from './utils/share.js';
 import { initTheme, toggleTheme } from './utils/theme.js';
 import { showTarotSkillsInfo } from './utils/tarot-skills-info.js';
 import { CONFIG } from './config.js';
 
 // 全局变量存储当前占卜结果
-let currentReading = {
-  question: '',
-  cards: [],
-  reading: '',
-  spreadId: '',
-  customSpread: null,
-  readerStyle: ''
-};
+let currentReading = createEmptyReading();
 
 let deckCache = [];
 let activeJournalId = null;
@@ -258,6 +252,47 @@ function handleSpreadChange() {
   if (!panel || !spreadSelect) return;
 
   panel.classList.toggle('hidden', spreadSelect.value !== 'custom');
+}
+
+function createEmptyReading() {
+  return {
+    question: '',
+    cards: [],
+    reading: '',
+    spreadId: '',
+    customSpread: null,
+    readerStyle: ''
+  };
+}
+
+function resetReadingState() {
+  currentReading = createEmptyReading();
+
+  const questionInput = document.getElementById('question-input');
+  if (questionInput) {
+    questionInput.value = '';
+  }
+
+  const followUpInput = document.getElementById('follow-up-input');
+  if (followUpInput) {
+    followUpInput.value = '';
+  }
+
+  document.getElementById('follow-up-panel')?.classList.add('hidden');
+
+  const shareBtn = document.getElementById('share-btn');
+  if (shareBtn) {
+    shareBtn.style.display = 'none';
+  }
+
+  const reasonDiv = document.getElementById('recommend-reason');
+  if (reasonDiv) {
+    reasonDiv.textContent = '';
+    reasonDiv.style.display = 'none';
+  }
+
+  clearCards();
+  resetOutput();
 }
 
 function activateFollowUpPanel() {
@@ -656,6 +691,7 @@ async function handleAuthSubmit(scope = 'modal') {
     }
 
     updateAuthUI();
+    resetReadingState();
     clearAuthForm(scope);
     renderHistoryList(document.getElementById('history-search')?.value || '');
     setAuthStatus('已登录，并完成历史记录同步', scope);
@@ -704,10 +740,12 @@ async function handleSyncNow() {
 
 function handleLogout() {
   logout();
+  resetReadingState();
   clearAuthForm('all');
   setAuthMode('login');
   setGateAuthMode('login');
   updateAuthUI();
+  renderHistoryList(document.getElementById('history-search')?.value || '');
   setAuthStatus('已退出登录，本地历史仍保留', 'gate');
   hideAuthModal();
 }
@@ -972,11 +1010,7 @@ function handleClearHistory() {
  * 切换收藏状态
  */
 window.toggleFavorite = function(id) {
-  const history = getHistory();
-  const item = history.find(h => h.id === id);
-  if (item) {
-    item.favorite = !item.favorite;
-    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+  if (toggleHistoryFavorite(id)) {
     renderHistoryList();
   }
 };
