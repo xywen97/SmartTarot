@@ -694,10 +694,6 @@
 }
 
 .auth-toggle {
-  position: fixed;
-  top: 88px;
-  right: 20px;
-  z-index: 100;
   min-width: 70px;
   padding: 9px 14px;
   background: var(--color-bg-card);
