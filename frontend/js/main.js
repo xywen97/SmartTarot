@@ -203,6 +203,9 @@ function setupEventListeners() {
   document.getElementById('auth-submit')?.addEventListener('click', handleAuthSubmit);
   document.getElementById('sync-now-btn')?.addEventListener('click', handleSyncNow);
   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+  document.querySelectorAll('.password-toggle').forEach((button) => {
+    button.addEventListener('click', handlePasswordToggle);
+  });
   
   // 问题输入框 - Ctrl/Cmd + Enter 快捷键
   const questionInput = document.getElementById('question-input');
@@ -533,6 +536,7 @@ function setAuthMode(mode) {
   document.getElementById('auth-login-tab').classList.toggle('active', mode === 'login');
   document.getElementById('auth-register-tab').classList.toggle('active', mode === 'register');
   document.getElementById('auth-display-name').classList.toggle('hidden', mode !== 'register');
+  document.getElementById('auth-confirm-row').classList.toggle('hidden', mode !== 'register');
   document.getElementById('auth-submit').textContent = mode === 'login' ? '登录' : '注册并同步';
   setAuthStatus('');
 }
@@ -573,11 +577,17 @@ function setAuthStatus(message) {
 async function handleAuthSubmit() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
+  const passwordConfirm = document.getElementById('auth-password-confirm').value;
   const displayName = document.getElementById('auth-display-name').value.trim();
   const submit = document.getElementById('auth-submit');
 
   if (!email || !password) {
     setAuthStatus('请输入邮箱和密码');
+    return;
+  }
+
+  if (authMode === 'register' && password !== passwordConfirm) {
+    setAuthStatus('两次输入的密码不一致');
     return;
   }
 
@@ -601,6 +611,16 @@ async function handleAuthSubmit() {
     submit.disabled = false;
     setAuthMode(authMode);
   }
+}
+
+function handlePasswordToggle(event) {
+  const targetId = event.currentTarget.dataset.target;
+  const input = document.getElementById(targetId);
+  if (!input) return;
+
+  const nextType = input.type === 'password' ? 'text' : 'password';
+  input.type = nextType;
+  event.currentTarget.textContent = nextType === 'password' ? '👁' : '🙈';
 }
 
 async function handleSyncNow() {

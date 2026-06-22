@@ -739,6 +739,7 @@
 
 #auth-email,
 #auth-password,
+#auth-password-confirm,
 #auth-display-name {
   width: 100%;
   padding: 12px;
@@ -747,6 +748,32 @@
   border-radius: 8px;
   color: var(--color-text-primary);
   font-size: 0.95rem;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 46px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.password-toggle:hover {
+  color: var(--color-gold);
 }
 
 .auth-actions {
