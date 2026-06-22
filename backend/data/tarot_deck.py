@@ -1,6 +1,25 @@
 """塔罗牌数据定义"""
 from data.card_images import get_card_image
 
+
+MINOR_SUITS_BY_OFFSET = ['wands', 'cups', 'swords', 'pentacles']
+MINOR_VALUES_BY_OFFSET = [
+    'ace', 'two', 'three', 'four', 'five', 'six', 'seven',
+    'eight', 'nine', 'ten', 'page', 'knight', 'queen', 'king'
+]
+
+
+def get_minor_identity_from_id(card_id):
+    """根据 22-77 的小阿尔卡纳 ID 推导花色和点数。"""
+    if not 22 <= card_id <= 77:
+        return None, None
+
+    offset = card_id - 22
+    suit = MINOR_SUITS_BY_OFFSET[offset // 14]
+    value = MINOR_VALUES_BY_OFFSET[offset % 14]
+    return suit, value
+
+
 class TarotCard:
     """塔罗牌类"""
 
@@ -13,6 +32,8 @@ class TarotCard:
         self.reversed = reversed
         self.element = element
         self.astrology = astrology
+        if type == 'minor':
+            suit, value = get_minor_identity_from_id(id)
         self.suit = suit
         self.value = value
         # 自动生成图片URL
@@ -29,6 +50,8 @@ class TarotCard:
             'reversed': self.reversed,
             'element': self.element,
             'astrology': self.astrology,
+            'suit': self.suit,
+            'value': self.value,
             'image': self.image
         }
 
