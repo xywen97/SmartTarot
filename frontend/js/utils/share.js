@@ -36,7 +36,7 @@ export async function generateShareCard(question, cards, reading) {
     
     shareCard.innerHTML = `
       <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="color: #ffd700; font-size: 2rem; margin: 0;">🌙 AI 塔罗占卜 🌙</h1>
+        <h1 style="color: #ffd700; font-size: 2rem; margin: 0;">⭐ AI 塔罗占卜 🌙</h1>
       </div>
       
       <div style="background: rgba(26, 26, 47, 0.8); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
