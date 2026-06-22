@@ -18,6 +18,38 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
+  <section class="login-gate" id="login-gate">
+    <div class="login-gate-bg">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="login-gate-card">
+      <div class="login-gate-brand">
+        <h1>🌙 AI 塔罗占卜 🌙</h1>
+        <p>登录后同步你的占卜历史、日记与每日塔罗趋势</p>
+      </div>
+      <div class="auth-form-panel gate-auth-form">
+        <div class="auth-tabs">
+          <button class="active" id="gate-login-tab">登录</button>
+          <button id="gate-register-tab">注册</button>
+        </div>
+        <input type="email" id="gate-auth-email" placeholder="邮箱">
+        <div class="password-field">
+          <input type="password" id="gate-auth-password" placeholder="密码（至少 8 位）">
+          <button type="button" class="password-toggle" data-target="gate-auth-password" title="显示/隐藏密码">👁</button>
+        </div>
+        <div class="password-field hidden" id="gate-auth-confirm-row">
+          <input type="password" id="gate-auth-password-confirm" placeholder="再次输入密码">
+          <button type="button" class="password-toggle" data-target="gate-auth-password-confirm" title="显示/隐藏密码">👁</button>
+        </div>
+        <input type="text" id="gate-auth-display-name" class="hidden" placeholder="昵称">
+        <button class="btn" id="gate-auth-submit">登录</button>
+        <div class="auth-status" id="gate-auth-status"></div>
+      </div>
+    </div>
+  </section>
+
   <div class="top-actions">
     <button class="theme-toggle" id="theme-toggle" title="切换主题">☀️</button>
     <button class="auth-toggle" id="auth-toggle" title="登录与云同步">登录</button>

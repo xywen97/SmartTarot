@@ -23,6 +23,7 @@ let currentReading = {
 let deckCache = [];
 let activeJournalId = null;
 let authMode = 'login';
+let gateAuthMode = 'login';
 
 /**
  * 初始化应用
@@ -200,7 +201,10 @@ function setupEventListeners() {
 
   document.getElementById('auth-login-tab')?.addEventListener('click', () => setAuthMode('login'));
   document.getElementById('auth-register-tab')?.addEventListener('click', () => setAuthMode('register'));
-  document.getElementById('auth-submit')?.addEventListener('click', handleAuthSubmit);
+  document.getElementById('auth-submit')?.addEventListener('click', () => handleAuthSubmit('modal'));
+  document.getElementById('gate-login-tab')?.addEventListener('click', () => setGateAuthMode('login'));
+  document.getElementById('gate-register-tab')?.addEventListener('click', () => setGateAuthMode('register'));
+  document.getElementById('gate-auth-submit')?.addEventListener('click', () => handleAuthSubmit('gate'));
   document.getElementById('sync-now-btn')?.addEventListener('click', handleSyncNow);
   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
   document.querySelectorAll('.password-toggle').forEach((button) => {
@@ -545,6 +549,16 @@ function setAuthMode(mode) {
   setAuthStatus('');
 }
 
+function setGateAuthMode(mode) {
+  gateAuthMode = mode;
+  document.getElementById('gate-login-tab').classList.toggle('active', mode === 'login');
+  document.getElementById('gate-register-tab').classList.toggle('active', mode === 'register');
+  document.getElementById('gate-auth-display-name').classList.toggle('hidden', mode !== 'register');
+  document.getElementById('gate-auth-confirm-row').classList.toggle('hidden', mode !== 'register');
+  document.getElementById('gate-auth-submit').textContent = mode === 'login' ? '登录' : '注册并进入';
+  setAuthStatus('', 'gate');
+}
+
 function updateAuthUI() {
   const user = getCurrentUser();
   const loggedIn = isLoggedIn();
@@ -556,6 +570,8 @@ function updateAuthUI() {
   if (toggle) {
     toggle.textContent = loggedIn ? '已登录' : '登录';
   }
+
+  document.body.classList.toggle('is-authenticated', loggedIn);
 
   if (!userPanel || !formPanel || !userInfo) return;
 
@@ -571,22 +587,32 @@ function updateAuthUI() {
   }
 }
 
-function setAuthStatus(message) {
-  const status = document.getElementById('auth-status');
+function setAuthStatus(message, scope = 'modal') {
+  const statusId = scope === 'gate' ? 'gate-auth-status' : 'auth-status';
+  const status = document.getElementById(statusId);
   if (status) {
     status.textContent = message;
   }
 }
 
-function clearAuthForm() {
-  ['auth-email', 'auth-password', 'auth-password-confirm', 'auth-display-name'].forEach((id) => {
+function clearAuthForm(scope = 'all') {
+  const ids = scope === 'gate'
+    ? ['gate-auth-email', 'gate-auth-password', 'gate-auth-password-confirm', 'gate-auth-display-name']
+    : scope === 'modal'
+      ? ['auth-email', 'auth-password', 'auth-password-confirm', 'auth-display-name']
+      : [
+          'auth-email', 'auth-password', 'auth-password-confirm', 'auth-display-name',
+          'gate-auth-email', 'gate-auth-password', 'gate-auth-password-confirm', 'gate-auth-display-name'
+        ];
+
+  ids.forEach((id) => {
     const input = document.getElementById(id);
     if (input) {
       input.value = '';
     }
   });
 
-  ['auth-password', 'auth-password-confirm'].forEach((id) => {
+  ids.filter(id => id.includes('password')).forEach((id) => {
     const input = document.getElementById(id);
     if (input) {
       input.type = 'password';
@@ -598,43 +624,53 @@ function clearAuthForm() {
   });
 }
 
-async function handleAuthSubmit() {
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  const passwordConfirm = document.getElementById('auth-password-confirm').value;
-  const displayName = document.getElementById('auth-display-name').value.trim();
-  const submit = document.getElementById('auth-submit');
+async function handleAuthSubmit(scope = 'modal') {
+  const isGate = scope === 'gate';
+  const mode = isGate ? gateAuthMode : authMode;
+  const prefix = isGate ? 'gate-auth' : 'auth';
+  const email = document.getElementById(`${prefix}-email`).value.trim();
+  const password = document.getElementById(`${prefix}-password`).value;
+  const passwordConfirm = document.getElementById(`${prefix}-password-confirm`).value;
+  const displayName = document.getElementById(`${prefix}-display-name`).value.trim();
+  const submit = document.getElementById(`${prefix}-submit`);
 
   if (!email || !password) {
-    setAuthStatus('请输入邮箱和密码');
+    setAuthStatus('请输入邮箱和密码', scope);
     return;
   }
 
-  if (authMode === 'register' && password !== passwordConfirm) {
-    setAuthStatus('两次输入的密码不一致');
+  if (mode === 'register' && password !== passwordConfirm) {
+    setAuthStatus('两次输入的密码不一致', scope);
     return;
   }
 
   submit.disabled = true;
-  submit.textContent = authMode === 'login' ? '登录中...' : '注册中...';
-  setAuthStatus('正在连接云端...');
+  submit.textContent = mode === 'login' ? '登录中...' : '注册中...';
+  setAuthStatus('正在连接云端...', scope);
 
   try {
-    if (authMode === 'login') {
+    if (mode === 'login') {
       await login(email, password);
     } else {
       await register(email, password, displayName);
     }
 
     updateAuthUI();
-    clearAuthForm();
+    clearAuthForm(scope);
     renderHistoryList(document.getElementById('history-search')?.value || '');
-    setAuthStatus('已登录，并完成历史记录同步');
+    setAuthStatus('已登录，并完成历史记录同步', scope);
+    hideAuthModal();
   } catch (error) {
-    setAuthStatus(error.message || '操作失败');
+    setAuthStatus(error.message || '操作失败', scope);
   } finally {
     submit.disabled = false;
-    setAuthMode(authMode);
+    if (isLoggedIn()) {
+      submit.textContent = mode === 'login' ? '登录' : (isGate ? '注册并进入' : '注册并同步');
+    } else if (isGate) {
+      setGateAuthMode(mode);
+    } else {
+      setAuthMode(mode);
+    }
   }
 }
 
@@ -668,10 +704,12 @@ async function handleSyncNow() {
 
 function handleLogout() {
   logout();
-  clearAuthForm();
+  clearAuthForm('all');
   setAuthMode('login');
+  setGateAuthMode('login');
   updateAuthUI();
-  setAuthStatus('已退出登录，本地历史仍保留');
+  setAuthStatus('已退出登录，本地历史仍保留', 'gate');
+  hideAuthModal();
 }
 
 function showJournalModal(id) {
