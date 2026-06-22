@@ -71,12 +71,12 @@ export function renderCards(cards) {
     flipBack.className = 'card-flip-back';
     
     const cardEl = document.createElement('div');
-    cardEl.className = `card ${orientation === 'reversed' ? 'reversed' : ''}`;
+    cardEl.className = 'card';
 
     // 如果有图片URL，显示图片
     if (card.image) {
       cardEl.innerHTML = `
-        <img src="${card.image}" alt="${card.name_cn}" class="card-image"
+        <img src="${card.image}" alt="${card.name_cn}" class="card-image ${orientation === 'reversed' ? 'card-image-reversed' : ''}"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <div class="card-text-fallback" style="display: none;">
           <div class="card-name">${card.name_cn}</div>

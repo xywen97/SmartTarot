@@ -125,9 +125,10 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 0;
   overflow: auto;
+  padding-top: 4px;
 }
 
 .cards-container {
@@ -135,7 +136,7 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding: 10px;
+  padding: 10px 10px 20px;
 }
 
 /* 解读结果区内容 */
