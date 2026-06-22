@@ -111,6 +111,11 @@
   .follow-up-panel {
     grid-template-columns: 1fr;
   }
+
+  .learn-controls,
+  .trend-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* 手机 */
@@ -155,6 +160,14 @@
 
   .question-templates {
     grid-template-columns: 1fr;
+  }
+
+  .learn-card {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .learn-card img {
+    width: 72px;
   }
   
   .card-flip-container {

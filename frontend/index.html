@@ -96,6 +96,7 @@
           <div class="button-group">
             <button class="btn" id="draw-btn">开始占卜</button>
             <button class="btn btn-secondary" id="daily-btn">每日塔罗</button>
+            <button class="btn btn-secondary" id="learn-btn">牌义学习</button>
             <button class="btn btn-secondary" id="history-btn">历史记录</button>
           </div>
         </div>
@@ -150,7 +151,52 @@
           <input type="text" id="history-search" placeholder="搜索问题...">
           <button class="btn btn-small" id="clear-history">清空全部</button>
         </div>
+        <div class="daily-trends" id="daily-trends"></div>
         <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 牌义学习中心 -->
+  <div id="learn-modal" class="modal">
+    <div class="modal-content learn-modal-content">
+      <div class="modal-header">
+        <h2>📖 牌义学习</h2>
+        <button class="modal-close" id="learn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="learn-controls">
+          <input type="text" id="learn-search" placeholder="搜索牌名、关键词、元素或星象...">
+          <select id="learn-filter">
+            <option value="all">全部牌</option>
+            <option value="major">大阿尔卡纳</option>
+            <option value="wands">权杖</option>
+            <option value="cups">圣杯</option>
+            <option value="swords">宝剑</option>
+            <option value="pentacles">星币</option>
+          </select>
+        </div>
+        <div class="learn-deck" id="learn-deck"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 占卜日记编辑 -->
+  <div id="journal-modal" class="modal">
+    <div class="modal-content journal-modal-content">
+      <div class="modal-header">
+        <h2>📝 占卜日记</h2>
+        <button class="modal-close" id="journal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="journal-summary" id="journal-summary"></div>
+        <label class="journal-label" for="journal-tags">标签（用逗号分隔）</label>
+        <input type="text" id="journal-tags" placeholder="例如：事业, 每日塔罗, 已验证">
+        <label class="journal-label" for="journal-note">我的记录</label>
+        <textarea id="journal-note" placeholder="记录当时的感受、后续发展、验证结果或下一步行动..."></textarea>
+        <div class="journal-actions">
+          <button class="btn" id="journal-save">保存日记</button>
+        </div>
       </div>
     </div>
   </div>

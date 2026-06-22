@@ -25,7 +25,9 @@ export function saveHistory(question, spreadId, cards, reading, metadata = {}) {
       favorite: false,
       customSpread: metadata.customSpread || null,
       readerStyle: metadata.readerStyle || '',
-      recordType: metadata.recordType || 'tarot'
+      recordType: metadata.recordType || 'tarot',
+      tags: metadata.tags || [],
+      note: metadata.note || ''
     };
     
     history.unshift(record);
@@ -39,6 +41,29 @@ export function saveHistory(question, spreadId, cards, reading, metadata = {}) {
     console.log('✅ 历史记录已保存');
   } catch (e) {
     console.error('保存历史记录失败:', e);
+  }
+}
+
+/**
+ * 更新占卜日记
+ */
+export function updateJournal(id, tags, note) {
+  try {
+    const history = getHistory();
+    const record = history.find(r => r.id === id);
+
+    if (!record) {
+      return false;
+    }
+
+    record.tags = tags;
+    record.note = note;
+    record.updatedAt = Date.now();
+    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    return true;
+  } catch (e) {
+    console.error('更新占卜日记失败:', e);
+    return false;
   }
 }
 

@@ -2,7 +2,7 @@
  * 主入口文件
  */
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
-import { getHistory, deleteHistory, clearAllHistory } from './services/history.js';
+import { getHistory, deleteHistory, clearAllHistory, updateJournal } from './services/history.js';
 import { appendText, clearOutput, getOutputText } from './ui/loading.js';
 import { shareReading } from './utils/share.js';
 import { initTheme, toggleTheme } from './utils/theme.js';
@@ -18,6 +18,9 @@ let currentReading = {
   customSpread: null,
   readerStyle: ''
 };
+
+let deckCache = [];
+let activeJournalId = null;
 
 /**
  * 初始化应用
@@ -53,6 +56,11 @@ function setupEventListeners() {
   const dailyBtn = document.getElementById('daily-btn');
   if (dailyBtn) {
     dailyBtn.addEventListener('click', handleDailyClick);
+  }
+
+  const learnBtn = document.getElementById('learn-btn');
+  if (learnBtn) {
+    learnBtn.addEventListener('click', showLearnModal);
   }
 
   // 分享按钮
@@ -102,6 +110,16 @@ function setupEventListeners() {
   if (historyClose) {
     historyClose.addEventListener('click', hideHistoryModal);
   }
+
+  const learnClose = document.getElementById('learn-close');
+  if (learnClose) {
+    learnClose.addEventListener('click', hideLearnModal);
+  }
+
+  const journalClose = document.getElementById('journal-close');
+  if (journalClose) {
+    journalClose.addEventListener('click', hideJournalModal);
+  }
   
   // 点击模态框外部关闭
   const historyModal = document.getElementById('history-modal');
@@ -109,6 +127,24 @@ function setupEventListeners() {
     historyModal.addEventListener('click', (e) => {
       if (e.target === historyModal) {
         hideHistoryModal();
+      }
+    });
+  }
+
+  const learnModal = document.getElementById('learn-modal');
+  if (learnModal) {
+    learnModal.addEventListener('click', (e) => {
+      if (e.target === learnModal) {
+        hideLearnModal();
+      }
+    });
+  }
+
+  const journalModal = document.getElementById('journal-modal');
+  if (journalModal) {
+    journalModal.addEventListener('click', (e) => {
+      if (e.target === journalModal) {
+        hideJournalModal();
       }
     });
   }
@@ -123,6 +159,21 @@ function setupEventListeners() {
   const historySearch = document.getElementById('history-search');
   if (historySearch) {
     historySearch.addEventListener('input', handleHistorySearch);
+  }
+
+  const learnSearch = document.getElementById('learn-search');
+  if (learnSearch) {
+    learnSearch.addEventListener('input', renderLearnDeck);
+  }
+
+  const learnFilter = document.getElementById('learn-filter');
+  if (learnFilter) {
+    learnFilter.addEventListener('change', renderLearnDeck);
+  }
+
+  const journalSave = document.getElementById('journal-save');
+  if (journalSave) {
+    journalSave.addEventListener('click', handleJournalSave);
   }
   
   // 问题输入框 - Ctrl/Cmd + Enter 快捷键
@@ -383,6 +434,7 @@ async function handleRecommendClick() {
     if (data.success) {
       // 设置推荐的牌阵
       spreadSelect.value = data.spread_id;
+      handleSpreadChange();
 
       // 显示推荐理由
       const confidence = Math.round(data.confidence * 100);
@@ -420,12 +472,201 @@ function hideHistoryModal() {
   modal.classList.remove('active');
 }
 
+async function showLearnModal() {
+  const modal = document.getElementById('learn-modal');
+  modal.classList.add('active');
+
+  if (!deckCache.length) {
+    const loaded = await loadDeck();
+    if (!loaded) {
+      return;
+    }
+  }
+
+  renderLearnDeck();
+}
+
+function hideLearnModal() {
+  const modal = document.getElementById('learn-modal');
+  modal.classList.remove('active');
+}
+
+function showJournalModal(id) {
+  const history = getHistory();
+  const item = history.find(h => h.id === id);
+  if (!item) return;
+
+  activeJournalId = id;
+  const modal = document.getElementById('journal-modal');
+  const summary = document.getElementById('journal-summary');
+  const tagsInput = document.getElementById('journal-tags');
+  const noteInput = document.getElementById('journal-note');
+
+  const date = new Date(item.timestamp).toLocaleString('zh-CN');
+  const cards = item.cards.map(c => c.cardName).join('、');
+  summary.innerHTML = `
+    <strong>${item.question}</strong>
+    <span>${date}</span>
+    <span>${cards || '无牌面记录'}</span>
+  `;
+  tagsInput.value = (item.tags || []).join(', ');
+  noteInput.value = item.note || '';
+  modal.classList.add('active');
+}
+
+function hideJournalModal() {
+  const modal = document.getElementById('journal-modal');
+  modal.classList.remove('active');
+  activeJournalId = null;
+}
+
+function handleJournalSave() {
+  if (!activeJournalId) return;
+
+  const tags = document.getElementById('journal-tags').value
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(Boolean);
+  const note = document.getElementById('journal-note').value.trim();
+
+  if (updateJournal(activeJournalId, tags, note)) {
+    hideJournalModal();
+    renderHistoryList(document.getElementById('history-search').value);
+  } else {
+    alert('保存失败，请稍后重试');
+  }
+}
+
+async function loadDeck() {
+  const deckContainer = document.getElementById('learn-deck');
+  deckContainer.innerHTML = '<div class="history-empty">正在加载牌库...</div>';
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/api/data/deck`);
+    const data = await response.json();
+    deckCache = data.success ? data.cards : [];
+    return deckCache.length > 0;
+  } catch (error) {
+    console.error('加载牌库失败:', error);
+    deckCache = [];
+    deckContainer.innerHTML = '<div class="history-empty">牌库加载失败，请确认后端服务已启动</div>';
+    return false;
+  }
+}
+
+function renderLearnDeck() {
+  const deckContainer = document.getElementById('learn-deck');
+  const search = document.getElementById('learn-search').value.trim().toLowerCase();
+  const filter = document.getElementById('learn-filter').value;
+
+  const cards = deckCache.filter(card => {
+    const matchesFilter = filter === 'all'
+      || card.type === filter
+      || card.suit === filter;
+    const haystack = [
+      card.name,
+      card.name_cn,
+      card.element,
+      card.astrology,
+      ...(card.upright?.keywords || []),
+      ...(card.reversed?.keywords || [])
+    ].join(' ').toLowerCase();
+
+    return matchesFilter && (!search || haystack.includes(search));
+  });
+
+  if (!cards.length) {
+    deckContainer.innerHTML = '<div class="history-empty">没有匹配的牌</div>';
+    return;
+  }
+
+  deckContainer.innerHTML = cards.map(card => {
+    const suitName = getSuitName(card);
+    return `
+      <article class="learn-card">
+        <img src="${card.image}" alt="${card.name_cn}" loading="lazy">
+        <div class="learn-card-body">
+          <div class="learn-card-title">
+            <strong>${card.name_cn}</strong>
+            <span>${card.name}</span>
+          </div>
+          <div class="learn-card-meta">
+            <span>${suitName}</span>
+            <span>${card.element || '无元素'}</span>
+            <span>${card.astrology || '无星象'}</span>
+          </div>
+          <div class="learn-meaning">
+            <b>正位</b>
+            <p>${(card.upright?.keywords || []).join(' · ')}</p>
+            <small>${card.upright?.meaning || ''}</small>
+          </div>
+          <div class="learn-meaning">
+            <b>逆位</b>
+            <p>${(card.reversed?.keywords || []).join(' · ')}</p>
+            <small>${card.reversed?.meaning || ''}</small>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function getSuitName(card) {
+  if (card.type === 'major') return '大阿尔卡纳';
+  const names = {
+    wands: '权杖',
+    cups: '圣杯',
+    swords: '宝剑',
+    pentacles: '星币'
+  };
+  return names[card.suit] || '小阿尔卡纳';
+}
+
+function renderDailyTrends(history) {
+  const trends = document.getElementById('daily-trends');
+  const dailyRecords = history
+    .filter(item => item.recordType === 'daily' || item.spreadId === 'daily')
+    .slice(0, 30);
+
+  if (!dailyRecords.length) {
+    trends.innerHTML = '';
+    return;
+  }
+
+  const totalCards = dailyRecords.flatMap(item => item.rawCards || []);
+  const uprightCount = totalCards.filter(card => card.orientation === 'upright').length;
+  const reversedCount = totalCards.filter(card => card.orientation === 'reversed').length;
+  const suitCounts = totalCards.reduce((acc, card) => {
+    const key = card.type === 'major' ? 'major' : card.suit;
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const dominantSuit = Object.entries(suitCounts).sort((a, b) => b[1] - a[1])[0];
+  const suitLabels = {
+    major: '大阿尔卡纳',
+    wands: '权杖',
+    cups: '圣杯',
+    swords: '宝剑',
+    pentacles: '星币'
+  };
+
+  trends.innerHTML = `
+    <div class="trend-title">每日塔罗趋势（最近 ${dailyRecords.length} 次）</div>
+    <div class="trend-grid">
+      <div><strong>${uprightCount}</strong><span>正位</span></div>
+      <div><strong>${reversedCount}</strong><span>逆位</span></div>
+      <div><strong>${dominantSuit ? suitLabels[dominantSuit[0]] : '-'}</strong><span>高频主题</span></div>
+    </div>
+  `;
+}
+
 /**
  * 渲染历史记录列表
  */
 function renderHistoryList(searchQuery = '') {
   const historyList = document.getElementById('history-list');
   const history = getHistory();
+  renderDailyTrends(history);
   
   // 过滤历史记录
   const filteredHistory = searchQuery
@@ -449,6 +690,8 @@ function renderHistoryList(searchQuery = '') {
     const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
     
     const cardsStr = item.cards.map(c => c.cardName).join('、');
+    const tags = item.tags || [];
+    const hasNote = Boolean(item.note);
     
     return `
       <div class="history-item" data-id="${item.id}">
@@ -462,6 +705,9 @@ function renderHistoryList(searchQuery = '') {
             <button class="history-item-btn" onclick="viewHistory('${item.id}')" title="查看">
               👁️
             </button>
+            <button class="history-item-btn" onclick="editJournal('${item.id}')" title="日记">
+              📝
+            </button>
             <button class="history-item-btn" onclick="deleteHistoryItem('${item.id}')" title="删除">
               🗑️
             </button>
@@ -472,6 +718,12 @@ function renderHistoryList(searchQuery = '') {
           <span>🃏 ${item.spreadId}</span>
         </div>
         <div class="history-item-cards">${cardsStr}</div>
+        ${tags.length || hasNote ? `
+          <div class="history-journal">
+            ${tags.map(tag => `<span>${tag}</span>`).join('')}
+            ${hasNote ? '<em>已记录日记</em>' : ''}
+          </div>
+        ` : ''}
       </div>
     `;
   }).join('');
@@ -505,6 +757,10 @@ window.toggleFavorite = function(id) {
     localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
     renderHistoryList();
   }
+};
+
+window.editJournal = function(id) {
+  showJournalModal(id);
 };
 
 /**
