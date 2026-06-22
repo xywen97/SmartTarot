@@ -524,6 +524,10 @@ function hideLearnModal() {
 
 function showAuthModal() {
   updateAuthUI();
+  if (!isLoggedIn()) {
+    clearAuthForm();
+    setAuthMode('login');
+  }
   document.getElementById('auth-modal').classList.add('active');
 }
 
@@ -574,6 +578,26 @@ function setAuthStatus(message) {
   }
 }
 
+function clearAuthForm() {
+  ['auth-email', 'auth-password', 'auth-password-confirm', 'auth-display-name'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.value = '';
+    }
+  });
+
+  ['auth-password', 'auth-password-confirm'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.type = 'password';
+    }
+  });
+
+  document.querySelectorAll('.password-toggle').forEach((button) => {
+    button.textContent = '👁';
+  });
+}
+
 async function handleAuthSubmit() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
@@ -603,6 +627,7 @@ async function handleAuthSubmit() {
     }
 
     updateAuthUI();
+    clearAuthForm();
     renderHistoryList(document.getElementById('history-search')?.value || '');
     setAuthStatus('已登录，并完成历史记录同步');
   } catch (error) {
@@ -643,6 +668,8 @@ async function handleSyncNow() {
 
 function handleLogout() {
   logout();
+  clearAuthForm();
+  setAuthMode('login');
   updateAuthUI();
   setAuthStatus('已退出登录，本地历史仍保留');
 }
