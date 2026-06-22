@@ -2,7 +2,7 @@
  * 主入口文件
  */
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
-import { getHistory, deleteHistory, clearAllHistory, updateJournal } from './services/history.js';
+import { getHistory, deleteHistory, hideAllHistory, updateJournal } from './services/history.js';
 import { appendText, clearOutput, getOutputText } from './ui/loading.js';
 import { shareReading } from './utils/share.js';
 import { initTheme, toggleTheme } from './utils/theme.js';
@@ -666,14 +666,15 @@ function renderDailyTrends(history) {
 function renderHistoryList(searchQuery = '') {
   const historyList = document.getElementById('history-list');
   const history = getHistory();
-  renderDailyTrends(history);
+  const visibleHistory = history.filter(item => !item.hidden);
+  renderDailyTrends(visibleHistory);
   
   // 过滤历史记录
   const filteredHistory = searchQuery
-    ? history.filter(item => 
+    ? visibleHistory.filter(item => 
         item.question.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : history;
+    : visibleHistory;
   
   if (filteredHistory.length === 0) {
     historyList.innerHTML = `
@@ -737,11 +738,11 @@ function handleHistorySearch(e) {
 }
 
 /**
- * 清空历史记录
+ * 隐藏历史记录
  */
 function handleClearHistory() {
-  if (confirm('确定要清空所有历史记录吗？此操作不可恢复。')) {
-    clearAllHistory();
+  if (confirm('将隐藏当前页面中的所有历史记录，但不会删除本地或后台保存的数据。确定继续吗？')) {
+    hideAllHistory();
     renderHistoryList();
   }
 }

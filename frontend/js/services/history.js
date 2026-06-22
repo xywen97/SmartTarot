@@ -94,14 +94,19 @@ export function deleteHistory(id) {
 }
 
 /**
- * 清空所有历史记录
+ * 隐藏所有历史记录，不删除存储数据。
  */
-export function clearAllHistory() {
+export function hideAllHistory() {
   try {
-    localStorage.removeItem(CONFIG.STORAGE_KEY_HISTORY);
-    console.log('✅ 所有历史记录已清空');
+    const history = getHistory().map(record => ({
+      ...record,
+      hidden: true,
+      hiddenAt: Date.now()
+    }));
+    localStorage.setItem(CONFIG.STORAGE_KEY_HISTORY, JSON.stringify(history));
+    console.log('✅ 所有历史记录已隐藏');
   } catch (e) {
-    console.error('清空历史记录失败:', e);
+    console.error('隐藏历史记录失败:', e);
   }
 }
 
