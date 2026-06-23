@@ -19,13 +19,13 @@
   }
   
   main {
-    grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.25fr);
-    grid-template-rows: minmax(440px, auto) minmax(200px, 1fr);
+    grid-template-columns: minmax(480px, 1fr) minmax(420px, 1fr);
+    grid-template-rows: minmax(340px, auto) minmax(200px, 1fr);
     gap: 15px;
   }
 
   #question-section {
-    min-height: 440px;
+    min-height: 340px;
   }
   
   #question-section {
@@ -90,6 +90,19 @@
   #question-input {
     min-height: 120px;
     font-size: 0.95rem;
+  }
+
+  .question-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-templates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .button-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .card-flip-container {

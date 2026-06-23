@@ -35,8 +35,8 @@ h1 {
 main {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(360px, 1fr) minmax(520px, 1.45fr);
-  grid-template-rows: minmax(460px, auto) minmax(210px, 1fr);
+  grid-template-columns: minmax(560px, 1fr) minmax(520px, 1fr);
+  grid-template-rows: minmax(340px, auto) minmax(210px, 1fr);
   gap: 20px;
   padding: 0 20px 20px 20px;
   overflow: auto;
@@ -50,7 +50,7 @@ main {
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 460px;
+  min-height: 340px;
 }
 
 /* 左下 - 卡牌展示区 */
@@ -91,15 +91,24 @@ main {
 /* 问题输入区内容 */
 .question-content {
   flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 0.42fr);
+  grid-template-areas:
+    "spread style"
+    "custom custom"
+    "question templates"
+    "actions actions";
+  column-gap: 14px;
+  row-gap: 12px;
   min-height: auto;
 }
 
 #question-input {
   flex: 0 0 auto;
+  grid-area: question;
   width: 100%;
-  min-height: 118px;
+  min-height: 120px;
+  height: 100%;
   max-height: 150px;
   padding: 15px;
   background: var(--color-bg-primary);
@@ -109,12 +118,13 @@ main {
   font-size: 1rem;
   font-family: var(--font-body);
   resize: none;
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .button-group {
+  grid-area: actions;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   flex-shrink: 0;
 }

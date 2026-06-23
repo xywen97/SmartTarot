@@ -232,8 +232,16 @@
 /* 牌阵与风格选择器 */
 .spread-selector,
 .reader-style-selector {
-  margin-bottom: 15px;
+  margin-bottom: 0;
   flex-shrink: 0;
+}
+
+.spread-selector {
+  grid-area: spread;
+}
+
+.reader-style-selector {
+  grid-area: style;
 }
 
 .spread-selector label,
@@ -271,10 +279,11 @@
 }
 
 .custom-spread-panel {
+  grid-area: custom;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 0;
 }
 
 #custom-spread-name,
@@ -296,14 +305,16 @@
 }
 
 .question-templates {
+  grid-area: templates;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
+  align-content: stretch;
   gap: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 0;
 }
 
 .question-templates button {
-  min-height: 34px;
+  min-height: 0;
   padding: 7px 9px;
   background: rgba(157, 78, 221, 0.12);
   border: 1px solid rgba(157, 78, 221, 0.45);
