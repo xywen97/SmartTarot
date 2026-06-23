@@ -2,11 +2,8 @@
 Flask==3.0.0
 flask-cors==4.0.0
 
-# Anthropic SDK
-anthropic==0.18.1
+# OpenAI-compatible HTTP client
+requests==2.31.0
 
 # 环境变量
 python-dotenv==1.0.0
-
-# 其他工具
-requests==2.31.0

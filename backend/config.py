@@ -11,7 +11,7 @@ class Config:
     # API 配置
     API_KEY = os.getenv('POLOAI_API_KEY', '')
     API_BASE_URL = os.getenv('POLOAI_BASE_URL', 'https://poloai.top')
-    MODEL = os.getenv('MODEL', 'claude-opus-4-8')
+    MODEL = os.getenv('MODEL', 'deepseek-v4-pro')
     
     # Flask 配置
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')

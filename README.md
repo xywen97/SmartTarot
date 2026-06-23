@@ -242,7 +242,7 @@ python3 -m http.server 8080
 ### 技术栈
 
 - **[Flask](https://flask.palletsprojects.com/)** - Python Web 框架
-- **[Claude API](https://www.anthropic.com/)** - AI 驱动的解读引擎
+- **OpenAI-compatible Chat Completions API** - AI 驱动的解读引擎
 - **[html2canvas](https://html2canvas.hertzen.com/)** - 前端截图库
 
 ### 特别说明

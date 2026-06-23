@@ -1,16 +1,11 @@
 """智能牌阵推荐服务"""
-from anthropic import Anthropic
-import os
+from services.llm_service import LLMService
 
 class SpreadRecommender:
     """牌阵推荐器"""
     
     def __init__(self):
-        self.client = Anthropic(
-            api_key=os.getenv('POLOAI_API_KEY'),
-            base_url=os.getenv('POLOAI_BASE_URL', 'https://poloai.top')
-        )
-        self.model = os.getenv('MODEL', 'claude-opus-4-8')
+        self.llm_service = LLMService()
     
     def recommend(self, question: str) -> dict:
         """
@@ -48,18 +43,9 @@ class SpreadRecommender:
 }}"""
 
         try:
-            response = self.client.messages.create(
-                model=self.model,
-                max_tokens=500,
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
             # 解析响应
             import json
-            result_text = response.content[0].text.strip()
+            result_text = self.llm_service.get_reading(prompt).strip()
             
             # 尝试提取JSON（可能包含额外文字）
             if '```json' in result_text:
