@@ -1010,42 +1010,45 @@ body:not(.is-authenticated) .top-actions {
 
 .drawn-card {
   position: relative;
-  width: 132px;
-  flex: 0 0 132px;
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 8px 9px;
-  border: 1px solid rgba(157, 78, 221, 0.42);
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 50% 28%, rgba(255, 215, 0, 0.16), transparent 42%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(157, 78, 221, 0.08)),
-    rgba(10, 10, 15, 0.16);
-  box-shadow:
-    0 20px 44px rgba(0, 0, 0, 0.18),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  width: var(--drawn-card-width);
+  flex: 0 0 var(--drawn-card-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
   animation: drawnCardIn 0.55s ease both;
   animation-delay: var(--card-delay);
   isolation: isolate;
 }
 
-.drawn-card > .card {
+.tarot-card-face {
   position: relative;
   z-index: 1;
-  width: min(100%, 104px);
+  width: var(--drawn-card-width);
   aspect-ratio: 3 / 5;
   height: auto;
   min-height: 0;
   padding: 0;
+  display: grid;
+  place-items: center;
   overflow: hidden;
+  margin: 0;
   background: rgba(255, 253, 248, 0.82);
+  border: 2px solid rgba(255, 215, 0, 0.84);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 1px rgba(157, 78, 221, 0.36),
+    0 14px 28px rgba(0, 0, 0, 0.18);
   filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.22));
 }
 
 .drawn-card::before,
 .drawn-card::after {
-  content: '';
+  content: none;
   position: absolute;
   pointer-events: none;
 }
@@ -1068,14 +1071,7 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .drawn-card-topline {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
+  display: none;
 }
 
 .card-index,
@@ -1177,19 +1173,23 @@ body:not(.is-authenticated) .top-actions {
   transform: rotateY(180deg);
 }
 
-/* 卡牌图片样式 */
-.card-image {
+/* 抽牌区卡牌图片样式 */
+.tarot-card-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   border-radius: 8px;
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: block;
   z-index: 1;
 }
 
-.card-image-reversed {
+.tarot-card-image.is-reversed {
   transform: rotate(180deg);
 }
 
@@ -1221,7 +1221,7 @@ body:not(.is-authenticated) .top-actions {
   margin-top: 0;
 }
 
-.card-text-fallback {
+.tarot-card-fallback {
   position: relative;
   z-index: 2;
   display: flex;
@@ -1275,7 +1275,7 @@ body:not(.is-authenticated) .top-actions {
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 6px 4px;
+  padding: 0 4px;
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
@@ -1283,7 +1283,7 @@ body:not(.is-authenticated) .top-actions {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 18px;
   width: max-content;
   min-width: 100%;
 }
@@ -1299,7 +1299,7 @@ body:not(.is-authenticated) .top-actions {
 
 @keyframes cardsMarquee {
   from { transform: translateX(0); }
-  to { transform: translateX(calc(-50% - 7px)); }
+  to { transform: translateX(calc(-50% - 9px)); }
 }
 
 @keyframes drawnCardIn {

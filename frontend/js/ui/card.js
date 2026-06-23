@@ -1,5 +1,5 @@
 /**
- * 卡牌渲染（带 3D 翻转动画）
+ * 卡牌渲染
  */
 
 // Tarot Skills 映射（简化版）
@@ -83,15 +83,15 @@ export function renderCards(cards) {
       cardShell.setAttribute('aria-hidden', 'true');
     }
     
-    const cardEl = document.createElement('div');
-    cardEl.className = 'card';
+    const cardEl = document.createElement('figure');
+    cardEl.className = 'tarot-card-face';
 
     // 如果有图片URL，显示图片
     if (card.image) {
       cardEl.innerHTML = `
-        <img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name_cn)}" class="card-image ${orientation === 'reversed' ? 'card-image-reversed' : ''}"
+        <img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name_cn)}" class="tarot-card-image ${orientation === 'reversed' ? 'is-reversed' : ''}"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <div class="card-text-fallback" style="display: none;">
+        <div class="tarot-card-fallback" style="display: none;">
           <div class="card-name">${escapeHtml(card.name_cn)}</div>
           <div class="card-name-en">${escapeHtml(card.name)}</div>
           <div class="card-orientation">${orientationLabel}</div>
@@ -101,27 +101,17 @@ export function renderCards(cards) {
     } else {
       // 没有图片时显示文字版本
       cardEl.innerHTML = `
-        <div class="card-name">${escapeHtml(card.name_cn)}</div>
-        <div class="card-name-en">${escapeHtml(card.name)}</div>
-        <div class="card-orientation">${orientationLabel}</div>
-        <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
+        <div class="tarot-card-fallback">
+          <div class="card-name">${escapeHtml(card.name_cn)}</div>
+          <div class="card-name-en">${escapeHtml(card.name)}</div>
+          <div class="card-orientation">${orientationLabel}</div>
+          <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
+        </div>
       `;
     }
     
-    cardShell.innerHTML = `
-      <div class="drawn-card-topline">
-        <span class="card-index">#${index + 1}</span>
-        <span class="orientation-chip">${orientationLabel}</span>
-      </div>
-    `;
     cardShell.appendChild(cardEl);
-    cardShell.insertAdjacentHTML('beforeend', `
-      <div class="drawn-card-meta">
-        <strong>${escapeHtml(card.name_cn)}</strong>
-        <span>${escapeHtml(card.name || 'Tarot Card')}</span>
-        ${keywords.length ? `<p>${escapeHtml(keywords.slice(0, 4).join(' · '))}</p>` : ''}
-      </div>
-    `);
+    cardShell.title = `${card.name_cn} · ${orientationLabel}`;
     
     // 添加到横向轨道
     cardsTrack.appendChild(cardShell);

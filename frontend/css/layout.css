@@ -36,7 +36,7 @@ main {
   flex: 1;
   display: grid;
   grid-template-columns: minmax(560px, 1fr) minmax(520px, 1fr);
-  grid-template-rows: minmax(340px, auto) 260px;
+  grid-template-rows: minmax(340px, auto) 340px;
   gap: 20px;
   padding: 0 20px 20px 20px;
   overflow: auto;
@@ -56,11 +56,12 @@ main {
 
 /* 左下 - 卡牌展示区 */
 #cards-section {
+  --drawn-card-width: 132px;
   grid-column: 1;
   grid-row: 2;
   display: flex;
   flex-direction: column;
-  min-height: 260px;
+  min-height: 340px;
 }
 
 /* 右侧 - 解读结果区 */
@@ -171,8 +172,8 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 0;
-  overflow: hidden;
+  min-height: 220px;
+  overflow: visible;
   padding: 0;
 }
 
@@ -183,7 +184,8 @@ main {
   justify-content: center;
   gap: 14px;
   width: 100%;
-  min-height: 0;
+  height: 100%;
+  min-height: 220px;
   padding: 0;
 }
 
