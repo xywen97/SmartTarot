@@ -135,8 +135,9 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 10px 10px 20px;
+  gap: 22px;
+  width: 100%;
+  padding: 10px 12px 24px;
 }
 
 /* 解读结果区内容 */

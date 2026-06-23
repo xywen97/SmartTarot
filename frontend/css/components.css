@@ -64,7 +64,7 @@
   width: 100%;
   height: 100%;
   background: var(--color-bg-card);
-  border: 2px solid var(--color-gold);
+  border: 2px solid rgba(255, 215, 0, 0.84);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -72,7 +72,10 @@
   align-items: center;
   padding: 15px;
   text-align: center;
-  box-shadow: var(--shadow-card);
+  box-shadow:
+    0 0 0 1px rgba(157, 78, 221, 0.36),
+    0 0 24px rgba(255, 215, 0, 0.18),
+    var(--shadow-card);
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
@@ -901,11 +904,150 @@ body:not(.is-authenticated) .top-actions {
 }
 
 /* 卡牌 3D 翻转效果 */
+.tarot-skill-banner {
+  position: relative;
+  width: min(100%, 360px);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background:
+    linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(247, 37, 133, 0.14)),
+    var(--color-bg-card);
+  border: 1px solid rgba(255, 215, 0, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(157, 78, 221, 0.18);
+  overflow: hidden;
+}
+
+.tarot-skill-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: translateX(-100%);
+  animation: cardSheen 4s ease-in-out infinite;
+}
+
+.skill-orb {
+  position: relative;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 10, 15, 0.48);
+  box-shadow: inset 0 0 0 1px rgba(255, 215, 0, 0.35);
+}
+
+.skill-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.skill-copy strong {
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+
+.skill-copy span {
+  color: var(--color-gold);
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.drawn-card {
+  position: relative;
+  width: min(100%, 250px);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid rgba(157, 78, 221, 0.42);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 215, 0, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(157, 78, 221, 0.08)),
+    rgba(10, 10, 15, 0.16);
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  animation: drawnCardIn 0.55s ease both;
+  animation-delay: var(--card-delay);
+}
+
+.drawn-card::before,
+.drawn-card::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.drawn-card::before {
+  inset: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.22);
+  border-radius: 14px;
+}
+
+.drawn-card::after {
+  width: 72%;
+  height: 16px;
+  bottom: 10px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  filter: blur(14px);
+}
+
+.drawn-card-topline {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+}
+
+.card-index,
+.orientation-chip {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.74rem;
+}
+
+.card-index {
+  color: var(--color-text-muted);
+}
+
+.orientation-chip {
+  padding: 3px 10px;
+  color: var(--color-text-primary);
+  border: 1px solid rgba(157, 78, 221, 0.42);
+  background: rgba(157, 78, 221, 0.14);
+}
+
+.drawn-card.is-reversed .orientation-chip {
+  color: var(--color-accent-secondary);
+  border-color: rgba(247, 37, 133, 0.42);
+  background: rgba(247, 37, 133, 0.13);
+}
+
 .card-flip-container {
   perspective: 1000px;
-  width: 160px;
-  height: 260px;
+  width: 190px;
+  height: 310px;
   margin: 0 auto;
+  filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.22));
 }
 
 .card-flip-inner {
@@ -936,7 +1078,11 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .card-flip-front {
-  background: var(--color-bg-card);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 215, 0, 0.2), transparent 36%),
+    linear-gradient(145deg, var(--color-bg-card), var(--color-bg-secondary));
   border: 2px solid var(--color-gold);
   display: flex;
   align-items: center;
@@ -944,6 +1090,22 @@ body:not(.is-authenticated) .top-actions {
   color: var(--color-gold);
   font-family: var(--font-display);
   font-size: 1.5rem;
+}
+
+.card-back-mark {
+  position: relative;
+  z-index: 1;
+  font-size: 2.2rem;
+  text-shadow: 0 0 18px rgba(255, 215, 0, 0.5);
+}
+
+.card-back-ring {
+  position: absolute;
+  width: 76%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 215, 0, 0.36);
+  border-radius: 50%;
+  box-shadow: inset 0 0 24px rgba(157, 78, 221, 0.18);
 }
 
 .card-flip-back {
@@ -970,8 +1132,8 @@ body:not(.is-authenticated) .top-actions {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-  padding: 10px;
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.92), rgba(10, 10, 15, 0.16), transparent);
+  padding: 38px 10px 10px;
   border-radius: 0 0 8px 8px;
   opacity: 1;
   transition: opacity var(--transition-normal);
@@ -984,6 +1146,7 @@ body:not(.is-authenticated) .top-actions {
 .card-overlay .card-name {
   font-size: 0.9rem;
   margin-bottom: 4px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
 .card-overlay .card-orientation {
@@ -997,6 +1160,51 @@ body:not(.is-authenticated) .top-actions {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+.drawn-card-meta {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+}
+
+.drawn-card-meta strong {
+  display: block;
+  color: var(--color-gold);
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+}
+
+.drawn-card-meta span {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.drawn-card-meta p {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin-top: 7px;
+}
+
+@keyframes drawnCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardSheen {
+  0%, 45% { transform: translateX(-110%); }
+  75%, 100% { transform: translateX(110%); }
 }
 
 /* Markdown 渲染样式 */

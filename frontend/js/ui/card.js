@@ -12,6 +12,19 @@ const TAROT_SKILLS_MAP = {
   20: "觉醒召唤", 21: "整合完成"
 };
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function getOrientationLabel(orientation) {
+  return orientation === 'upright' ? '正位' : '逆位';
+}
+
 /**
  * 渲染卡牌（带翻转动画）
  */
@@ -29,21 +42,13 @@ export function renderCards(cards) {
     const skillName = TAROT_SKILLS_MAP[primaryMajor.id];
     if (skillName) {
       const skillBanner = document.createElement('div');
-      skillBanner.style.cssText = `
-        background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(247, 37, 133, 0.2));
-        border: 1px solid var(--color-accent-primary);
-        border-radius: 8px;
-        padding: 10px 15px;
-        margin-bottom: 15px;
-        text-align: center;
-        font-size: 0.9rem;
-        color: var(--color-text-primary);
-      `;
+      skillBanner.className = 'tarot-skill-banner';
       skillBanner.innerHTML = `
-        🎴 <strong>Tarot Skill 已激活：</strong>
-        <span style="color: var(--color-gold);">${primaryMajor.name_cn} - ${skillName}</span>
-        <br>
-        <span style="font-size: 0.8rem; color: var(--color-text-muted);">AI 将使用此思维模式进行解读</span>
+        <div class="skill-orb">🎴</div>
+        <div class="skill-copy">
+          <strong>Tarot Skill 已激活</strong>
+          <span>${escapeHtml(primaryMajor.name_cn)} · ${escapeHtml(skillName)}</span>
+        </div>
       `;
       container.appendChild(skillBanner);
     }
@@ -53,6 +58,12 @@ export function renderCards(cards) {
     const card = cardData.card || cardData;
     const orientation = cardData.orientation;
     const meaningData = card[orientation];
+    const orientationLabel = getOrientationLabel(orientation);
+    const keywords = meaningData?.keywords || [];
+
+    const cardShell = document.createElement('article');
+    cardShell.className = `drawn-card ${orientation === 'reversed' ? 'is-reversed' : 'is-upright'}`;
+    cardShell.style.setProperty('--card-delay', `${index * 90}ms`);
     
     // 创建翻转容器
     const flipContainer = document.createElement('div');
@@ -64,7 +75,10 @@ export function renderCards(cards) {
     // 卡牌正面（背面）
     const flipFront = document.createElement('div');
     flipFront.className = 'card-flip-front';
-    flipFront.innerHTML = '🌙';
+    flipFront.innerHTML = `
+      <div class="card-back-mark">✦</div>
+      <div class="card-back-ring"></div>
+    `;
     
     // 卡牌背面（实际内容）
     const flipBack = document.createElement('div');
@@ -76,26 +90,26 @@ export function renderCards(cards) {
     // 如果有图片URL，显示图片
     if (card.image) {
       cardEl.innerHTML = `
-        <img src="${card.image}" alt="${card.name_cn}" class="card-image ${orientation === 'reversed' ? 'card-image-reversed' : ''}"
+        <img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name_cn)}" class="card-image ${orientation === 'reversed' ? 'card-image-reversed' : ''}"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <div class="card-text-fallback" style="display: none;">
-          <div class="card-name">${card.name_cn}</div>
-          <div class="card-name-en">${card.name}</div>
-          <div class="card-orientation">${orientation === 'upright' ? '正位' : '逆位'}</div>
-          <div class="card-keywords">${meaningData.keywords.join(' · ')}</div>
+          <div class="card-name">${escapeHtml(card.name_cn)}</div>
+          <div class="card-name-en">${escapeHtml(card.name)}</div>
+          <div class="card-orientation">${orientationLabel}</div>
+          <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
         </div>
         <div class="card-overlay">
-          <div class="card-name">${card.name_cn}</div>
-          <div class="card-orientation">${orientation === 'upright' ? '正位' : '逆位'}</div>
+          <div class="card-name">${escapeHtml(card.name_cn)}</div>
+          <div class="card-orientation">${orientationLabel}</div>
         </div>
       `;
     } else {
       // 没有图片时显示文字版本
       cardEl.innerHTML = `
-        <div class="card-name">${card.name_cn}</div>
-        <div class="card-name-en">${card.name}</div>
-        <div class="card-orientation">${orientation === 'upright' ? '正位' : '逆位'}</div>
-        <div class="card-keywords">${meaningData.keywords.join(' · ')}</div>
+        <div class="card-name">${escapeHtml(card.name_cn)}</div>
+        <div class="card-name-en">${escapeHtml(card.name)}</div>
+        <div class="card-orientation">${orientationLabel}</div>
+        <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
       `;
     }
     
@@ -103,9 +117,23 @@ export function renderCards(cards) {
     flipInner.appendChild(flipFront);
     flipInner.appendChild(flipBack);
     flipContainer.appendChild(flipInner);
+    cardShell.innerHTML = `
+      <div class="drawn-card-topline">
+        <span class="card-index">#${index + 1}</span>
+        <span class="orientation-chip">${orientationLabel}</span>
+      </div>
+    `;
+    cardShell.appendChild(flipContainer);
+    cardShell.insertAdjacentHTML('beforeend', `
+      <div class="drawn-card-meta">
+        <strong>${escapeHtml(card.name_cn)}</strong>
+        <span>${escapeHtml(card.name || 'Tarot Card')}</span>
+        ${keywords.length ? `<p>${escapeHtml(keywords.slice(0, 4).join(' · '))}</p>` : ''}
+      </div>
+    `);
     
     // 添加到容器
-    container.appendChild(flipContainer);
+    container.appendChild(cardShell);
     
     // 延迟触发翻转动画
     setTimeout(() => {

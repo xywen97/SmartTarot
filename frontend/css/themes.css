@@ -104,6 +104,41 @@ body.light-theme .reading-output {
   border-color: rgba(109, 63, 209, 0.62);
 }
 
+body.light-theme .tarot-skill-banner {
+  background:
+    linear-gradient(135deg, rgba(109, 63, 209, 0.12), rgba(184, 50, 128, 0.08)),
+    #fffdf8;
+  border-color: rgba(184, 107, 0, 0.32);
+  box-shadow: 0 12px 28px rgba(68, 45, 107, 0.1);
+}
+
+body.light-theme .skill-orb {
+  background: #f3ecfa;
+}
+
+body.light-theme .drawn-card {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(184, 107, 0, 0.12), transparent 42%),
+    linear-gradient(180deg, #fffdf8, #f5eefb);
+  border-color: rgba(109, 63, 209, 0.28);
+  box-shadow:
+    0 20px 44px rgba(68, 45, 107, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+body.light-theme .drawn-card::after {
+  background: rgba(68, 45, 107, 0.12);
+}
+
+body.light-theme .orientation-chip {
+  color: var(--color-text-secondary);
+  background: rgba(109, 63, 209, 0.08);
+}
+
+body.light-theme .card-flip-container {
+  filter: drop-shadow(0 12px 18px rgba(68, 45, 107, 0.16));
+}
+
 body.light-theme ::-webkit-scrollbar-track {
   background: #e7deef;
 }
