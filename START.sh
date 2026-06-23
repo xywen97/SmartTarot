@@ -12,7 +12,7 @@ else
     echo "🚀 启动后端服务..."
     cd "$(dirname "$0")"
     python3 run.py > /tmp/tarot-backend.log 2>&1 &
-    sleep 3
+    sleep 1
     
     if lsof -Pi :5001 -sTCP:LISTEN -t >/dev/null ; then
         echo "✅ 后端启动成功: http://localhost:5001"
@@ -29,7 +29,7 @@ else
     echo "🚀 启动前端服务..."
     cd "$(dirname "$0")/frontend"
     python3 -m http.server 8080 > /tmp/tarot-frontend.log 2>&1 &
-    sleep 2
+    sleep 1
     
     if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null ; then
         echo "✅ 前端启动成功: http://localhost:8080"
