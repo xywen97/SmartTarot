@@ -51,6 +51,7 @@ main {
   flex-direction: column;
   height: auto;
   min-height: 340px;
+  justify-content: space-between;
 }
 
 /* 左下 - 卡牌展示区 */
@@ -91,7 +92,7 @@ main {
 
 /* 问题输入区内容 */
 .question-content {
-  flex: 0 0 auto;
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-areas:
@@ -101,7 +102,8 @@ main {
     "actions actions";
   column-gap: 14px;
   row-gap: 12px;
-  min-height: auto;
+  min-height: 0;
+  align-content: space-between;
 }
 
 #question-input {

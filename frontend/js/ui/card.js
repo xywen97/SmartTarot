@@ -77,25 +77,6 @@ export function renderCards(cards) {
       cardShell.setAttribute('aria-hidden', 'true');
     }
     
-    // 创建翻转容器
-    const flipContainer = document.createElement('div');
-    flipContainer.className = 'card-flip-container';
-    
-    const flipInner = document.createElement('div');
-    flipInner.className = 'card-flip-inner';
-    
-    // 卡牌正面（背面）
-    const flipFront = document.createElement('div');
-    flipFront.className = 'card-flip-front';
-    flipFront.innerHTML = `
-      <div class="card-back-mark">✦</div>
-      <div class="card-back-ring"></div>
-    `;
-    
-    // 卡牌背面（实际内容）
-    const flipBack = document.createElement('div');
-    flipBack.className = 'card-flip-back';
-    
     const cardEl = document.createElement('div');
     cardEl.className = 'card';
 
@@ -121,17 +102,13 @@ export function renderCards(cards) {
       `;
     }
     
-    flipBack.appendChild(cardEl);
-    flipInner.appendChild(flipFront);
-    flipInner.appendChild(flipBack);
-    flipContainer.appendChild(flipInner);
     cardShell.innerHTML = `
       <div class="drawn-card-topline">
         <span class="card-index">#${index + 1}</span>
         <span class="orientation-chip">${orientationLabel}</span>
       </div>
     `;
-    cardShell.appendChild(flipContainer);
+    cardShell.appendChild(cardEl);
     cardShell.insertAdjacentHTML('beforeend', `
       <div class="drawn-card-meta">
         <strong>${escapeHtml(card.name_cn)}</strong>
@@ -143,13 +120,6 @@ export function renderCards(cards) {
     // 添加到横向轨道
     cardsTrack.appendChild(cardShell);
     
-    // 延迟触发翻转动画
-    setTimeout(() => {
-      flipContainer.classList.add('flipping');
-      setTimeout(() => {
-        flipInner.style.transform = 'rotateY(180deg)';
-      }, 50);
-    }, index * 300); // 每张牌延迟 300ms
   }
 
   cards.forEach((cardData, index) => {

@@ -1021,6 +1021,18 @@ body:not(.is-authenticated) .top-actions {
   isolation: isolate;
 }
 
+.drawn-card > .card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 104px);
+  aspect-ratio: 3 / 5;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.22));
+}
+
 .drawn-card::before,
 .drawn-card::after {
   content: '';
@@ -1164,6 +1176,7 @@ body:not(.is-authenticated) .top-actions {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 
 .card-image-reversed {
@@ -1199,6 +1212,8 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .card-text-fallback {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
