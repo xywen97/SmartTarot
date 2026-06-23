@@ -98,10 +98,6 @@ export function renderCards(cards) {
           <div class="card-orientation">${orientationLabel}</div>
           <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
         </div>
-        <div class="card-overlay">
-          <div class="card-name">${escapeHtml(card.name_cn)}</div>
-          <div class="card-orientation">${orientationLabel}</div>
-        </div>
       `;
     } else {
       // 没有图片时显示文字版本

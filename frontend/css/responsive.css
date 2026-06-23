@@ -40,8 +40,8 @@
   }
   
   .card-flip-container {
-    width: 170px;
-    height: 278px;
+    width: min(100%, 168px);
+    height: auto;
   }
 }
 
@@ -89,8 +89,8 @@
   }
   
   .card-flip-container {
-    width: 180px;
-    height: 294px;
+    width: min(100%, 174px);
+    height: auto;
   }
   
   .cards-container {
@@ -100,7 +100,7 @@
   }
 
   .drawn-card {
-    width: min(100%, 238px);
+    width: min(100%, 228px);
   }
   
   .reading-output {
@@ -193,12 +193,12 @@
   }
   
   .card-flip-container {
-    width: 160px;
-    height: 260px;
+    width: min(100%, 156px);
+    height: auto;
   }
 
   .drawn-card {
-    width: min(100%, 220px);
+    width: min(100%, 206px);
     padding: 12px 14px 14px;
   }
   
@@ -235,8 +235,8 @@
 /* 超小屏幕 */
 @media (max-width: 360px) {
   .card-flip-container {
-    width: 140px;
-    height: 228px;
+    width: min(100%, 138px);
+    height: auto;
   }
   
   .card-name {

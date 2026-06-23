@@ -965,11 +965,11 @@ body:not(.is-authenticated) .top-actions {
 
 .drawn-card {
   position: relative;
-  width: min(100%, 250px);
+  width: min(100%, 236px);
   display: grid;
   justify-items: center;
-  gap: 12px;
-  padding: 14px 16px 16px;
+  gap: 10px;
+  padding: 12px 14px 14px;
   border: 1px solid rgba(157, 78, 221, 0.42);
   border-radius: 18px;
   background:
@@ -981,6 +981,7 @@ body:not(.is-authenticated) .top-actions {
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   animation: drawnCardIn 0.55s ease both;
   animation-delay: var(--card-delay);
+  isolation: isolate;
 }
 
 .drawn-card::before,
@@ -994,15 +995,17 @@ body:not(.is-authenticated) .top-actions {
   inset: 8px;
   border: 1px solid rgba(255, 215, 0, 0.22);
   border-radius: 14px;
+  z-index: 0;
 }
 
 .drawn-card::after {
   width: 72%;
   height: 16px;
-  bottom: 10px;
+  bottom: 8px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.22);
   filter: blur(14px);
+  z-index: 0;
 }
 
 .drawn-card-topline {
@@ -1043,9 +1046,12 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .card-flip-container {
+  position: relative;
+  z-index: 1;
   perspective: 1000px;
-  width: 190px;
-  height: 310px;
+  width: min(100%, 180px);
+  aspect-ratio: 3 / 5;
+  height: auto;
   margin: 0 auto;
   filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.22));
 }
@@ -1128,6 +1134,7 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .card-overlay {
+  display: none;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1164,9 +1171,16 @@ body:not(.is-authenticated) .top-actions {
 
 .drawn-card-meta {
   position: relative;
-  z-index: 1;
-  width: 100%;
+  z-index: 2;
+  width: calc(100% - 8px);
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   text-align: center;
+  padding: 9px 8px 0;
+  border-top: 1px solid rgba(157, 78, 221, 0.22);
 }
 
 .drawn-card-meta strong {
