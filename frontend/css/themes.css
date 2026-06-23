@@ -2,33 +2,114 @@
 
 /* 亮色主题 */
 body.light-theme {
-  --color-bg-primary: #f5f5f7;
-  --color-bg-secondary: #ffffff;
-  --color-bg-card: #f9f9fb;
+  --color-bg-primary: #f1edf7;
+  --color-bg-secondary: #fbf8ff;
+  --color-bg-card: #f6f0fb;
   
-  --color-accent-primary: #7c3aed;
-  --color-accent-secondary: #db2777;
-  --color-gold: #f59e0b;
-  --color-silver: #6b7280;
+  --color-accent-primary: #6d3fd1;
+  --color-accent-secondary: #b83280;
+  --color-gold: #b86b00;
+  --color-silver: #64748b;
   
-  --color-text-primary: #1f2937;
-  --color-text-secondary: #4b5563;
-  --color-text-muted: #9ca3af;
+  --color-text-primary: #20192f;
+  --color-text-secondary: #4f435f;
+  --color-text-muted: #746a82;
   
-  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.3);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 8px 22px rgba(109, 63, 209, 0.18);
+  --shadow-card: 0 10px 28px rgba(68, 45, 107, 0.1);
 }
 
 /* 亮色主题 - 星空背景调整 */
 body.light-theme::before {
   background-image: 
-    radial-gradient(2px 2px at 20% 30%, #9ca3af, transparent),
-    radial-gradient(2px 2px at 60% 70%, #9ca3af, transparent),
-    radial-gradient(1px 1px at 50% 50%, #9ca3af, transparent),
-    radial-gradient(1px 1px at 80% 10%, #9ca3af, transparent),
-    radial-gradient(2px 2px at 90% 60%, #9ca3af, transparent),
-    radial-gradient(1px 1px at 33% 80%, #9ca3af, transparent);
-  opacity: 0.15;
+    radial-gradient(2px 2px at 20% 30%, rgba(109, 63, 209, 0.22), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(184, 107, 0, 0.18), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(79, 67, 95, 0.18), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(109, 63, 209, 0.18), transparent),
+    radial-gradient(2px 2px at 90% 60%, rgba(184, 107, 0, 0.16), transparent),
+    radial-gradient(1px 1px at 33% 80%, rgba(79, 67, 95, 0.16), transparent);
+  opacity: 0.55;
+}
+
+body.light-theme h1 {
+  text-shadow: 0 2px 14px rgba(184, 107, 0, 0.22);
+}
+
+body.light-theme .section,
+body.light-theme .modal-content {
+  border-color: rgba(109, 63, 209, 0.55);
+  box-shadow: var(--shadow-card);
+}
+
+body.light-theme .btn {
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(184, 50, 128, 0.2);
+}
+
+body.light-theme .btn:hover {
+  box-shadow: 0 10px 26px rgba(109, 63, 209, 0.24);
+}
+
+body.light-theme .btn:disabled {
+  color: #6f647c;
+  background: #e9dff2;
+  border: 1px solid #d7c6e9;
+}
+
+body.light-theme .btn-secondary,
+body.light-theme .question-templates button,
+body.light-theme .auth-tabs button {
+  color: var(--color-text-secondary);
+  background: #f3ecfa;
+  border-color: rgba(109, 63, 209, 0.45);
+}
+
+body.light-theme .btn-secondary:hover,
+body.light-theme .question-templates button:hover,
+body.light-theme .auth-tabs button:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-gold);
+  background: #fffaf2;
+}
+
+body.light-theme input,
+body.light-theme textarea,
+body.light-theme select,
+body.light-theme .reading-output,
+body.light-theme .history-item,
+body.light-theme .trend-grid div,
+body.light-theme .learn-card,
+body.light-theme .journal-summary,
+body.light-theme #auth-user-info {
+  background: #fffdf8;
+  color: var(--color-text-primary);
+}
+
+body.light-theme input::placeholder,
+body.light-theme textarea::placeholder {
+  color: #83788f;
+  opacity: 1;
+}
+
+body.light-theme .empty-state {
+  color: #6b6078;
+}
+
+body.light-theme .empty-state-icon {
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 10px rgba(184, 107, 0, 0.18));
+}
+
+body.light-theme .reading-output {
+  border-color: rgba(109, 63, 209, 0.62);
+}
+
+body.light-theme ::-webkit-scrollbar-track {
+  background: #e7deef;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
 }
 
 .top-actions {
