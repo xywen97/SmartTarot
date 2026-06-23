@@ -36,10 +36,10 @@ main {
   flex: 1;
   display: grid;
   grid-template-columns: minmax(360px, 1fr) minmax(520px, 1.45fr);
-  grid-template-rows: minmax(0, 1.12fr) minmax(230px, 0.88fr);
+  grid-template-rows: minmax(460px, auto) minmax(210px, 1fr);
   gap: 20px;
   padding: 0 20px 20px 20px;
-  overflow: hidden;
+  overflow: auto;
   min-height: 0;
 }
 
@@ -49,6 +49,8 @@ main {
   grid-row: 1;
   display: flex;
   flex-direction: column;
+  height: auto;
+  min-height: 460px;
 }
 
 /* 左下 - 卡牌展示区 */
@@ -88,15 +90,17 @@ main {
 
 /* 问题输入区内容 */
 .question-content {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  min-height: auto;
 }
 
 #question-input {
-  flex: 1;
+  flex: 0 0 auto;
   width: 100%;
+  min-height: 118px;
+  max-height: 150px;
   padding: 15px;
   background: var(--color-bg-primary);
   border: 2px solid var(--color-accent-primary);
@@ -105,18 +109,19 @@ main {
   font-size: 1rem;
   font-family: var(--font-body);
   resize: none;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .button-group {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   flex-shrink: 0;
 }
 
 .button-group .btn {
-  flex: 1 1 110px;
+  width: 100%;
+  min-width: 0;
 }
 
 /* 卡牌展示区内容 */

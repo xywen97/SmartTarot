@@ -20,8 +20,12 @@
   
   main {
     grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.25fr);
-    grid-template-rows: minmax(0, 1.1fr) minmax(210px, 0.9fr);
+    grid-template-rows: minmax(440px, auto) minmax(200px, 1fr);
     gap: 15px;
+  }
+
+  #question-section {
+    min-height: 440px;
   }
   
   #question-section {
