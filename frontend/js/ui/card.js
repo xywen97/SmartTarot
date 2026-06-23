@@ -97,6 +97,11 @@ export function renderCards(cards) {
           <div class="card-orientation">${orientationLabel}</div>
           <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
         </div>
+        <figcaption class="tarot-card-label">
+          <span class="card-index">#${index + 1}</span>
+          <span class="card-title">${escapeHtml(card.name_cn)}</span>
+          <span class="orientation-chip">${orientationLabel}</span>
+        </figcaption>
       `;
     } else {
       // 没有图片时显示文字版本
@@ -107,6 +112,11 @@ export function renderCards(cards) {
           <div class="card-orientation">${orientationLabel}</div>
           <div class="card-keywords">${escapeHtml(keywords.join(' · '))}</div>
         </div>
+        <figcaption class="tarot-card-label">
+          <span class="card-index">#${index + 1}</span>
+          <span class="card-title">${escapeHtml(card.name_cn)}</span>
+          <span class="orientation-chip">${orientationLabel}</span>
+        </figcaption>
       `;
     }
     

@@ -128,9 +128,29 @@ body.light-theme .drawn-card::after {
   background: rgba(68, 45, 107, 0.12);
 }
 
+body.light-theme .tarot-card-label {
+  background: linear-gradient(135deg, rgba(255, 253, 248, 0.9), rgba(243, 236, 250, 0.84));
+  border-color: rgba(184, 107, 0, 0.42);
+  color: #332346;
+  box-shadow: 0 6px 16px rgba(68, 45, 107, 0.12);
+}
+
+body.light-theme .card-index {
+  color: #7c6d86;
+}
+
+body.light-theme .card-title {
+  color: #b86b00;
+}
+
 body.light-theme .orientation-chip {
-  color: var(--color-text-secondary);
-  background: rgba(109, 63, 209, 0.08);
+  color: #fff;
+  background: rgba(109, 63, 209, 0.62);
+}
+
+body.light-theme .drawn-card.is-reversed .orientation-chip {
+  color: #fff;
+  background: rgba(184, 50, 128, 0.68);
 }
 
 body.light-theme .card-flip-container {
