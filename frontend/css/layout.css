@@ -97,6 +97,7 @@ main {
 
 .cards-section-header h2 {
   margin-bottom: 0;
+  line-height: 42px;
 }
 
 .cards-section-header {
@@ -111,6 +112,9 @@ main {
 .tarot-skill-slot {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  min-height: 42px;
 }
 
 /* 问题输入区内容 */

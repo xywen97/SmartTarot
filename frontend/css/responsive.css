@@ -191,9 +191,13 @@
   }
 
   .cards-section-header {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .cards-section-header h2 {
+    margin-bottom: 0;
   }
 
   .tarot-skill-slot {
