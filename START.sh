@@ -53,5 +53,5 @@ echo "🌙 现在可以在浏览器中使用塔罗占卜了！"
 echo ""
 
 # 自动打开浏览器
-sleep 1
-open "http://localhost:8080"
+# sleep 1
+# open "http://localhost:8080"
