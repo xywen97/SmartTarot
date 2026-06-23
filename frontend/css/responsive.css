@@ -20,7 +20,7 @@
   
   main {
     grid-template-columns: minmax(480px, 1fr) minmax(420px, 1fr);
-    grid-template-rows: minmax(340px, auto) minmax(200px, 1fr);
+    grid-template-rows: minmax(340px, auto) 240px;
     gap: 15px;
   }
 
@@ -44,7 +44,7 @@
   }
   
   .card-flip-container {
-    width: min(100%, 106px);
+    width: min(100%, 96px);
     height: auto;
   }
 }
@@ -111,7 +111,7 @@
   }
   
   .card-flip-container {
-    width: min(100%, 112px);
+    width: min(100%, 104px);
     height: auto;
   }
   
@@ -120,8 +120,8 @@
   }
 
   .drawn-card {
-    width: 148px;
-    flex-basis: 148px;
+    width: 132px;
+    flex-basis: 132px;
   }
   
   .reading-output {

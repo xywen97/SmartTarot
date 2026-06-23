@@ -36,7 +36,7 @@ main {
   flex: 1;
   display: grid;
   grid-template-columns: minmax(560px, 1fr) minmax(520px, 1fr);
-  grid-template-rows: minmax(340px, auto) minmax(210px, 1fr);
+  grid-template-rows: minmax(340px, auto) 260px;
   gap: 20px;
   padding: 0 20px 20px 20px;
   overflow: auto;
@@ -59,6 +59,7 @@ main {
   grid-row: 2;
   display: flex;
   flex-direction: column;
+  min-height: 260px;
 }
 
 /* 右侧 - 解读结果区 */
@@ -143,7 +144,7 @@ main {
   justify-content: center;
   min-height: 0;
   overflow: hidden;
-  padding: 4px 0;
+  padding: 0;
 }
 
 .cards-container {
