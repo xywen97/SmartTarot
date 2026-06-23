@@ -31,6 +31,7 @@ function getOrientationLabel(orientation) {
 export function renderCards(cards) {
   const container = document.getElementById('cards-container');
   container.innerHTML = '';
+  const shouldMarquee = cards.length > 2;
 
   // 检查是否有大阿尔卡纳（用于 Tarot Skills）
   const majorCards = cards.filter(c => (c.card || c).type === 'major');
@@ -54,7 +55,15 @@ export function renderCards(cards) {
     }
   }
   
-  cards.forEach((cardData, index) => {
+  const cardsViewport = document.createElement('div');
+  cardsViewport.className = `cards-marquee ${shouldMarquee ? 'is-animated' : ''}`;
+  const cardsTrack = document.createElement('div');
+  cardsTrack.className = 'cards-track';
+  cardsTrack.style.setProperty('--marquee-duration', `${Math.max(cards.length, 3) * 5}s`);
+  cardsViewport.appendChild(cardsTrack);
+  container.appendChild(cardsViewport);
+
+  function createCardElement(cardData, index, isClone = false) {
     const card = cardData.card || cardData;
     const orientation = cardData.orientation;
     const meaningData = card[orientation];
@@ -64,6 +73,9 @@ export function renderCards(cards) {
     const cardShell = document.createElement('article');
     cardShell.className = `drawn-card ${orientation === 'reversed' ? 'is-reversed' : 'is-upright'}`;
     cardShell.style.setProperty('--card-delay', `${index * 90}ms`);
+    if (isClone) {
+      cardShell.setAttribute('aria-hidden', 'true');
+    }
     
     // 创建翻转容器
     const flipContainer = document.createElement('div');
@@ -128,8 +140,8 @@ export function renderCards(cards) {
       </div>
     `);
     
-    // 添加到容器
-    container.appendChild(cardShell);
+    // 添加到横向轨道
+    cardsTrack.appendChild(cardShell);
     
     // 延迟触发翻转动画
     setTimeout(() => {
@@ -138,7 +150,17 @@ export function renderCards(cards) {
         flipInner.style.transform = 'rotateY(180deg)';
       }, 50);
     }, index * 300); // 每张牌延迟 300ms
+  }
+
+  cards.forEach((cardData, index) => {
+    createCardElement(cardData, index);
   });
+
+  if (shouldMarquee) {
+    cards.forEach((cardData, index) => {
+      createCardElement(cardData, index, true);
+    });
+  }
 }
 
 /**

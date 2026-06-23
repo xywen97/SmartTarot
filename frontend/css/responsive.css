@@ -1,4 +1,4 @@
-/* 响应式样式 - 适配三栏布局 */
+/* 响应式样式 - 适配左侧工作区 + 右侧解读区 */
 
 /* 大屏幕优化 */
 @media (min-width: 1400px) {
@@ -12,15 +12,15 @@
   }
 }
 
-/* 平板 - 改为两栏 */
+/* 平板 */
 @media (max-width: 1024px) {
   h1 {
     font-size: 2rem;
   }
   
   main {
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.25fr);
+    grid-template-rows: minmax(0, 1.1fr) minmax(210px, 0.9fr);
     gap: 15px;
   }
   
@@ -40,7 +40,7 @@
   }
   
   .card-flip-container {
-    width: min(100%, 168px);
+    width: min(100%, 106px);
     height: auto;
   }
 }
@@ -89,18 +89,17 @@
   }
   
   .card-flip-container {
-    width: min(100%, 174px);
+    width: min(100%, 112px);
     height: auto;
   }
   
   .cards-container {
-    flex-direction: row;
-    flex-wrap: wrap;
     justify-content: center;
   }
 
   .drawn-card {
-    width: min(100%, 228px);
+    width: 148px;
+    flex-basis: 148px;
   }
   
   .reading-output {
@@ -193,13 +192,14 @@
   }
   
   .card-flip-container {
-    width: min(100%, 156px);
+    width: min(100%, 104px);
     height: auto;
   }
 
   .drawn-card {
-    width: min(100%, 206px);
-    padding: 12px 14px 14px;
+    width: 138px;
+    flex-basis: 138px;
+    padding: 9px 10px 10px;
   }
   
   .card-name {
@@ -235,7 +235,7 @@
 /* 超小屏幕 */
 @media (max-width: 360px) {
   .card-flip-container {
-    width: min(100%, 138px);
+    width: min(100%, 96px);
     height: auto;
   }
   

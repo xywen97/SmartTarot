@@ -965,13 +965,14 @@ body:not(.is-authenticated) .top-actions {
 
 .drawn-card {
   position: relative;
-  width: min(100%, 236px);
+  width: 148px;
+  flex: 0 0 148px;
   display: grid;
   justify-items: center;
-  gap: 10px;
-  padding: 12px 14px 14px;
+  gap: 7px;
+  padding: 9px 10px 10px;
   border: 1px solid rgba(157, 78, 221, 0.42);
-  border-radius: 18px;
+  border-radius: 14px;
   background:
     radial-gradient(circle at 50% 28%, rgba(255, 215, 0, 0.16), transparent 42%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(157, 78, 221, 0.08)),
@@ -992,7 +993,7 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .drawn-card::before {
-  inset: 8px;
+  inset: 6px;
   border: 1px solid rgba(255, 215, 0, 0.22);
   border-radius: 14px;
   z-index: 0;
@@ -1021,11 +1022,11 @@ body:not(.is-authenticated) .top-actions {
 
 .card-index,
 .orientation-chip {
-  min-height: 26px;
+  min-height: 22px;
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  font-size: 0.74rem;
+  font-size: 0.68rem;
 }
 
 .card-index {
@@ -1033,7 +1034,7 @@ body:not(.is-authenticated) .top-actions {
 }
 
 .orientation-chip {
-  padding: 3px 10px;
+  padding: 2px 8px;
   color: var(--color-text-primary);
   border: 1px solid rgba(157, 78, 221, 0.42);
   background: rgba(157, 78, 221, 0.14);
@@ -1049,7 +1050,7 @@ body:not(.is-authenticated) .top-actions {
   position: relative;
   z-index: 1;
   perspective: 1000px;
-  width: min(100%, 180px);
+  width: min(100%, 112px);
   aspect-ratio: 3 / 5;
   height: auto;
   margin: 0 auto;
@@ -1173,13 +1174,13 @@ body:not(.is-authenticated) .top-actions {
   position: relative;
   z-index: 2;
   width: calc(100% - 8px);
-  min-height: 72px;
+  min-height: 58px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  padding: 9px 8px 0;
+  padding: 7px 6px 0;
   border-top: 1px solid rgba(157, 78, 221, 0.22);
 }
 
@@ -1187,22 +1188,54 @@ body:not(.is-authenticated) .top-actions {
   display: block;
   color: var(--color-gold);
   font-family: var(--font-display);
-  font-size: 1.06rem;
+  font-size: 0.9rem;
 }
 
 .drawn-card-meta span {
   display: block;
   color: var(--color-text-secondary);
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-style: italic;
   margin-top: 2px;
 }
 
 .drawn-card-meta p {
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   line-height: 1.4;
   margin-top: 7px;
+}
+
+.cards-marquee {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 8px 4px 14px;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.cards-track {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 14px;
+  width: max-content;
+  min-width: 100%;
+}
+
+.cards-marquee.is-animated .cards-track {
+  justify-content: flex-start;
+  animation: cardsMarquee var(--marquee-duration) linear infinite;
+}
+
+.cards-marquee.is-animated:hover .cards-track {
+  animation-play-state: paused;
+}
+
+@keyframes cardsMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 7px)); }
 }
 
 @keyframes drawnCardIn {
