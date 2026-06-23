@@ -109,7 +109,7 @@ body.light-theme .tarot-skill-banner {
     linear-gradient(135deg, rgba(109, 63, 209, 0.12), rgba(184, 50, 128, 0.08)),
     #fffdf8;
   border-color: rgba(184, 107, 0, 0.32);
-  box-shadow: 0 12px 28px rgba(68, 45, 107, 0.1);
+  box-shadow: 0 8px 18px rgba(68, 45, 107, 0.08);
 }
 
 body.light-theme .skill-orb {

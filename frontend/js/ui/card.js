@@ -30,7 +30,11 @@ function getOrientationLabel(orientation) {
  */
 export function renderCards(cards) {
   const container = document.getElementById('cards-container');
+  const skillSlot = document.getElementById('tarot-skill-slot');
   container.innerHTML = '';
+  if (skillSlot) {
+    skillSlot.innerHTML = '';
+  }
   const shouldMarquee = cards.length > 2;
 
   // 检查是否有大阿尔卡纳（用于 Tarot Skills）
@@ -51,7 +55,9 @@ export function renderCards(cards) {
           <span>${escapeHtml(primaryMajor.name_cn)} · ${escapeHtml(skillName)}</span>
         </div>
       `;
-      container.appendChild(skillBanner);
+      if (skillSlot) {
+        skillSlot.appendChild(skillBanner);
+      }
     }
   }
   
@@ -138,6 +144,10 @@ export function renderCards(cards) {
  */
 export function clearCards() {
   const container = document.getElementById('cards-container');
+  const skillSlot = document.getElementById('tarot-skill-slot');
+  if (skillSlot) {
+    skillSlot.innerHTML = '';
+  }
   container.innerHTML = `
     <div class="empty-state">
       <div class="empty-state-icon">🌟</div>

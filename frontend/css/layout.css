@@ -85,9 +85,32 @@ main {
 .section h2 {
   font-family: var(--font-display);
   color: var(--color-gold);
-  margin-bottom: 15px;
+  margin: 0;
   font-size: 1.5rem;
   flex-shrink: 0;
+}
+
+.section > h2,
+.section > div > h2 {
+  margin-bottom: 15px;
+}
+
+.cards-section-header h2 {
+  margin-bottom: 0;
+}
+
+.cards-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 15px;
+  min-height: 42px;
+  flex-shrink: 0;
+}
+
+.tarot-skill-slot {
+  flex: 1;
+  min-width: 0;
 }
 
 /* 问题输入区内容 */

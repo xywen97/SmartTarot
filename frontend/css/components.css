@@ -942,18 +942,20 @@ body:not(.is-authenticated) .top-actions {
 /* 卡牌 3D 翻转效果 */
 .tarot-skill-banner {
   position: relative;
-  width: min(100%, 360px);
+  width: 100%;
+  max-width: 420px;
+  min-height: 38px;
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 8px;
+  padding: 6px 12px;
   background:
     linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(247, 37, 133, 0.14)),
     var(--color-bg-card);
   border: 1px solid rgba(255, 215, 0, 0.55);
-  border-radius: 14px;
-  box-shadow: 0 12px 28px rgba(157, 78, 221, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(157, 78, 221, 0.14);
   overflow: hidden;
 }
 
@@ -969,8 +971,8 @@ body:not(.is-authenticated) .top-actions {
 .skill-orb {
   position: relative;
   z-index: 1;
-  width: 38px;
-  height: 38px;
+  width: 26px;
+  height: 26px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -983,20 +985,27 @@ body:not(.is-authenticated) .top-actions {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
   min-width: 0;
+  white-space: nowrap;
 }
 
 .skill-copy strong {
   color: var(--color-text-primary);
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
 }
 
 .skill-copy span {
   color: var(--color-gold);
-  font-size: 0.88rem;
-  line-height: 1.35;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .drawn-card {

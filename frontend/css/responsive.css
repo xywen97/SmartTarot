@@ -189,6 +189,16 @@
     font-size: 1.2rem;
     margin-bottom: 12px;
   }
+
+  .cards-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tarot-skill-slot {
+    width: 100%;
+  }
   
   #question-input {
     min-height: 100px;
