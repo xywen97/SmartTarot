@@ -99,6 +99,11 @@
 
   .question-templates {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: auto;
+  }
+
+  .question-templates button {
+    min-height: 34px;
   }
 
   .button-group {

@@ -234,6 +234,9 @@
 .reader-style-selector {
   margin-bottom: 0;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .spread-selector {
@@ -249,12 +252,32 @@
   display: block;
   color: var(--color-text-secondary);
   font-size: 0.9rem;
+}
+
+.field-heading,
+.reader-style-selector > label {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
   margin-bottom: 8px;
+}
+
+.field-heading {
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#recommend-btn {
+  width: auto;
+  min-width: 110px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
 
 #spread-select,
 #reader-style-select {
   width: 100%;
+  min-height: 48px;
   padding: 10px 12px;
   background: var(--color-bg-primary);
   border: 2px solid var(--color-accent-primary);
@@ -310,11 +333,13 @@
   grid-template-columns: 1fr;
   align-content: stretch;
   gap: 8px;
+  height: 148px;
   margin-bottom: 0;
 }
 
 .question-templates button {
   min-height: 0;
+  height: 100%;
   padding: 7px 9px;
   background: rgba(157, 78, 221, 0.12);
   border: 1px solid rgba(157, 78, 221, 0.45);
