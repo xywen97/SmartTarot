@@ -41,6 +41,10 @@ class Config:
         'RECORDS_DIR',
         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'records'))
     )
+    ASSETS_DIR = os.getenv(
+        'ASSETS_DIR',
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets'))
+    )
 
     # 用户与云同步配置
     DATABASE_PATH = os.getenv(

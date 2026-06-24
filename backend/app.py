@@ -1,5 +1,5 @@
 """Flask 应用主入口"""
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from config import Config
 from api.reading import reading_bp
@@ -39,6 +39,10 @@ def create_app():
             'status': 'ok',
             'message': 'Tarot API is running'
         })
+
+    @app.route('/assets/<path:filename>', methods=['GET'])
+    def serve_asset(filename):
+        return send_from_directory(Config.ASSETS_DIR, filename)
     
     # 根路径
     @app.route('/', methods=['GET'])

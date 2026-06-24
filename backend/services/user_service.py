@@ -521,7 +521,11 @@ class UserService:
         return f"{provider}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{secrets.token_hex(6)}"
 
     def _placeholder_qr_code_url(self, order_no, provider):
-        return f"payment://{provider}/scan?order_no={order_no}"
+        filenames = {
+            'wechat': 'wechat.png',
+            'alipay': 'alipay.png',
+        }
+        return f"/assets/{filenames[provider]}"
 
     def _verify_payment_signature(self, order_no, provider, provider_trade_no, signature):
         if not Config.PAYMENT_NOTIFY_SECRET:

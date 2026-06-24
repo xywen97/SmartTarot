@@ -4,7 +4,7 @@
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
 import { getHistory, getVisibleHistoryCount, deleteHistory, hideAllHistory, updateJournal, toggleFavorite as toggleHistoryFavorite } from './services/history.js';
 import { getCurrentUser, isLoggedIn, login, logout, register, syncHistory } from './services/auth.js';
-import { createRechargeOrder, formatAmount, loadBillingStatus } from './services/billing.js';
+import { createRechargeOrder, formatAmount, loadBillingStatus, resolveBillingAssetUrl } from './services/billing.js';
 import apiClient from './api/client.js';
 import { appendText, clearOutput, getOutputText, resetOutput } from './ui/loading.js';
 import { clearCards } from './ui/card.js';
@@ -432,7 +432,7 @@ async function handleCreateRechargeOrder() {
   try {
     const order = await createRechargeOrder(billingState.selectedPackageId, billingState.selectedProvider);
     renderRechargeOrder(order);
-    setAuthStatus('订单已创建，当前为微信/支付宝扫码接口占位。');
+    setAuthStatus('订单已创建，请扫码付款；支付完成后等待后台确认入账。');
   } catch (error) {
     setAuthStatus(error.message || '创建订单失败');
   } finally {
@@ -446,13 +446,14 @@ function renderRechargeOrder(order) {
   if (!container) return;
 
   const providerName = order.provider === 'wechat' ? '微信支付' : '支付宝';
+  const qrCodeUrl = resolveBillingAssetUrl(order.qr_code_url);
   container.classList.remove('hidden');
   container.innerHTML = `
-    <div class="qr-placeholder">${providerName}</div>
+    <img class="payment-qr-code" src="${qrCodeUrl}" alt="${providerName}收款码">
     <div class="order-detail">
       <strong>${order.credits} 次查询 · ${formatAmount(order.amount_cents)}</strong>
       <span>订单号：${order.order_no}</span>
-      <small>${order.qr_code_url}</small>
+      <small>${providerName}收款码 · 状态：${order.status === 'paid' ? '已支付' : '待确认'}</small>
     </div>
   `;
 }

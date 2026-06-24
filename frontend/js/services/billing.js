@@ -2,6 +2,7 @@
  * 查询余量与充值服务
  */
 import apiClient from '../api/client.js';
+import { CONFIG } from '../config.js';
 
 export async function loadBillingStatus() {
   const data = await apiClient.get('/api/billing/status');
@@ -27,4 +28,10 @@ export function emitBalance(queryCredits) {
 
 export function formatAmount(amountCents) {
   return `¥${(amountCents / 100).toFixed(2)}`;
+}
+
+export function resolveBillingAssetUrl(path) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${CONFIG.API_BASE_URL}${path}`;
 }
