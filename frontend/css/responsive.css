@@ -171,6 +171,19 @@
     grid-template-columns: 1fr;
   }
 
+  .qr-zoom-layer {
+    padding: 14px;
+  }
+
+  .qr-zoom-card {
+    width: calc(100vw - 28px);
+    padding: 18px;
+  }
+
+  .qr-zoom-image {
+    width: min(280px, calc(100vw - 72px));
+  }
+
   header {
     padding: 10px;
   }

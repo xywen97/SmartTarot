@@ -957,15 +957,128 @@
   color: var(--color-text-secondary);
 }
 
-.payment-qr-code {
+.payment-qr-trigger {
   width: 96px;
   aspect-ratio: 1;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+.payment-qr-code {
+  width: 100%;
+  height: 100%;
   display: block;
   object-fit: contain;
   background: #ffffff;
   border: 1px solid var(--color-accent-primary);
   border-radius: 8px;
   padding: 4px;
+}
+
+.payment-qr-trigger:hover .payment-qr-code {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.28);
+}
+
+.qr-zoom-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2600;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  pointer-events: none;
+}
+
+.qr-zoom-layer.active {
+  pointer-events: auto;
+}
+
+.qr-zoom-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 10, 0.72);
+  opacity: 0;
+  backdrop-filter: blur(8px);
+  transition: opacity 220ms ease;
+}
+
+.qr-zoom-layer.active .qr-zoom-backdrop {
+  opacity: 1;
+}
+
+.qr-zoom-layer.closing .qr-zoom-backdrop {
+  opacity: 0;
+}
+
+.qr-zoom-card {
+  position: relative;
+  width: min(420px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 22px;
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-accent-primary);
+  border-radius: 14px;
+  box-shadow: 0 0 50px rgba(157, 78, 221, 0.5);
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+.qr-zoom-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 10, 18, 0.72);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: 50%;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+  z-index: 1;
+}
+
+.qr-zoom-close:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.qr-zoom-image {
+  width: min(320px, calc(100vw - 104px));
+  aspect-ratio: 1;
+  display: block;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid rgba(255, 215, 0, 0.55);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.qr-zoom-caption {
+  width: 100%;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.qr-zoom-caption strong,
+.qr-zoom-caption span {
+  display: block;
+}
+
+.qr-zoom-caption strong {
+  color: var(--color-gold);
+  margin-bottom: 6px;
 }
 
 .order-detail {

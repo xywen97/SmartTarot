@@ -26,6 +26,7 @@ let billingState = {
   selectedPackageId: 'starter',
   selectedProvider: 'wechat'
 };
+let qrZoomState = null;
 
 /**
  * 初始化应用
@@ -449,21 +450,116 @@ function renderRechargeOrder(order) {
   const qrCodeUrl = resolveBillingAssetUrl(order.qr_code_url);
   container.classList.remove('hidden');
   container.innerHTML = `
-    <img class="payment-qr-code" src="${qrCodeUrl}" alt="${providerName}收款码">
+    <button type="button" class="payment-qr-trigger" aria-label="放大${providerName}收款码">
+      <img class="payment-qr-code" src="${qrCodeUrl}" alt="${providerName}收款码">
+    </button>
     <div class="order-detail">
       <strong>${order.credits} 次查询 · ${formatAmount(order.amount_cents)}</strong>
       <span>订单号：${order.order_no}</span>
       <small>${providerName}收款码 · 状态：${order.status === 'paid' ? '已支付' : '待确认'}</small>
     </div>
   `;
+
+  const trigger = container.querySelector('.payment-qr-trigger');
+  trigger.addEventListener('click', () => openQrZoom(order, trigger));
+  requestAnimationFrame(() => openQrZoom(order, trigger));
 }
 
 function hideRechargeOrder() {
+  closeQrZoom({ immediate: true });
+
   const container = document.getElementById('recharge-order');
   if (!container) return;
 
   container.classList.add('hidden');
   container.innerHTML = '';
+}
+
+function openQrZoom(order, trigger) {
+  if (!trigger || qrZoomState?.overlay) return;
+
+  const providerName = order.provider === 'wechat' ? '微信支付' : '支付宝';
+  const qrCodeUrl = resolveBillingAssetUrl(order.qr_code_url);
+  const overlay = document.createElement('div');
+  overlay.className = 'qr-zoom-layer';
+  overlay.innerHTML = `
+    <div class="qr-zoom-backdrop"></div>
+    <div class="qr-zoom-card" role="dialog" aria-modal="true" aria-label="${providerName}收款码">
+      <button type="button" class="qr-zoom-close" aria-label="收起二维码">&times;</button>
+      <img class="qr-zoom-image" src="${qrCodeUrl}" alt="${providerName}收款码">
+      <div class="qr-zoom-caption">
+        <strong>${order.credits} 次查询 · ${formatAmount(order.amount_cents)}</strong>
+        <span>${providerName}收款码 · ${order.status === 'paid' ? '已支付' : '待确认'}</span>
+      </div>
+    </div>
+  `;
+
+  const handleEscape = (event) => {
+    if (event.key === 'Escape') {
+      closeQrZoom();
+    }
+  };
+
+  document.body.appendChild(overlay);
+  qrZoomState = { overlay, trigger, handleEscape };
+  document.addEventListener('keydown', handleEscape);
+  overlay.querySelector('.qr-zoom-close').addEventListener('click', () => closeQrZoom());
+  overlay.querySelector('.qr-zoom-backdrop').addEventListener('click', () => closeQrZoom());
+
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+    animateQrZoom(trigger, overlay.querySelector('.qr-zoom-card'), 'open');
+  });
+}
+
+function closeQrZoom(options = {}) {
+  if (!qrZoomState?.overlay) return;
+
+  const { overlay, trigger, handleEscape } = qrZoomState;
+  const card = overlay.querySelector('.qr-zoom-card');
+  document.removeEventListener('keydown', handleEscape);
+  qrZoomState = null;
+
+  if (options.immediate || !trigger?.isConnected || !card) {
+    overlay.remove();
+    return;
+  }
+
+  overlay.classList.add('closing');
+  const animation = animateQrZoom(trigger, card, 'close');
+  animation.finished.finally(() => {
+    overlay.remove();
+  });
+}
+
+function animateQrZoom(trigger, card, direction) {
+  const source = trigger.getBoundingClientRect();
+  const target = card.getBoundingClientRect();
+  const sourceCenterX = source.left + source.width / 2;
+  const sourceCenterY = source.top + source.height / 2;
+  const targetCenterX = target.left + target.width / 2;
+  const targetCenterY = target.top + target.height / 2;
+  const translateX = sourceCenterX - targetCenterX;
+  const translateY = sourceCenterY - targetCenterY;
+  const scaleX = source.width / target.width;
+  const scaleY = source.height / target.height;
+  const collapsed = {
+    opacity: 0.72,
+    transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+  };
+  const expanded = {
+    opacity: 1,
+    transform: 'translate(0, 0) scale(1, 1)'
+  };
+
+  return card.animate(
+    direction === 'open' ? [collapsed, expanded] : [expanded, collapsed],
+    {
+      duration: direction === 'open' ? 280 : 240,
+      easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+      fill: 'forwards'
+    }
+  );
 }
 
 /**
@@ -727,6 +823,7 @@ function showAuthModal() {
 }
 
 function hideAuthModal() {
+  closeQrZoom({ immediate: true });
   document.getElementById('auth-modal').classList.remove('active');
 }
 
