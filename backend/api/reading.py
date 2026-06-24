@@ -1,8 +1,10 @@
 """占卜相关 API"""
 from flask import Blueprint, request, jsonify, Response
+from api.auth import require_auth
 from services.tarot_service import TarotService
 from services.spread_recommender import SpreadRecommender
 from services.record_service import RecordService
+from services.user_service import UserService
 from data.spreads import get_spread_by_id
 from utils.validators import validate_question, sanitize_input
 import json
@@ -11,6 +13,23 @@ reading_bp = Blueprint('reading', __name__, url_prefix='/api/reading')
 tarot_service = TarotService()
 spread_recommender = SpreadRecommender()
 record_service = RecordService()
+user_service = UserService()
+
+
+def _consume_query(endpoint, request_summary=None):
+    result = user_service.consume_query_credit(
+        request.current_user['id'],
+        endpoint=endpoint,
+        request_summary=request_summary
+    )
+    if not result['success']:
+        return result, jsonify({
+            'success': False,
+            'error': result['error'],
+            'query_credits': result['query_credits'],
+            'recharge_required': True
+        }), 402
+    return result, None, None
 
 
 @reading_bp.route('/draw', methods=['POST'])
@@ -48,6 +67,7 @@ def draw_cards():
 
 
 @reading_bp.route('/interpret', methods=['POST'])
+@require_auth
 def interpret_cards():
     """
     获取解读 API（流式）
@@ -87,14 +107,29 @@ def interpret_cards():
                 'error': '未提供卡牌信息'
             }), 400
 
+        cards = tarot_service.normalize_drawn_cards(spread_id, cards, custom_spread)
+
         # 流式 generator 在请求上下文外执行，需提前捕获 request 信息
+        user_id = request.current_user['id']
         client_ip = request.remote_addr
         user_agent = request.headers.get('User-Agent')
+        usage, error_response, status_code = _consume_query(
+            '/api/reading/interpret',
+            {
+                'spread_id': spread_id,
+                'question_length': len(question),
+                'card_count': len(cards)
+            }
+        )
+        if error_response:
+            return error_response, status_code
         
         def generate():
             """生成器函数，用于流式返回"""
             reading_parts = []
             try:
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': usage['query_credits']})}\n\n"
+
                 for text in tarot_service.get_reading_stream(
                     question,
                     spread_id,
@@ -126,7 +161,9 @@ def interpret_cards():
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
             except Exception as e:
-                yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                credit_status = user_service.refund_query_credit(user_id, usage['operation_id'])
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': credit_status['query_credits']})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'error': str(e), 'query_credits': credit_status['query_credits']})}\n\n"
         
         return Response(generate(), mimetype='text/event-stream')
     
@@ -138,6 +175,7 @@ def interpret_cards():
 
 
 @reading_bp.route('/daily', methods=['POST'])
+@require_auth
 def daily_tarot():
     """
     每日塔罗 API（流式）
@@ -154,12 +192,23 @@ def daily_tarot():
         reader_style = data.get('reader_style')
         cards = tarot_service.draw_cards('single')
 
+        user_id = request.current_user['id']
         client_ip = request.remote_addr
         user_agent = request.headers.get('User-Agent')
+        usage, error_response, status_code = _consume_query(
+            '/api/reading/daily',
+            {
+                'question_length': len(question),
+                'card_count': len(cards)
+            }
+        )
+        if error_response:
+            return error_response, status_code
 
         def generate():
             reading_parts = []
             try:
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': usage['query_credits']})}\n\n"
                 yield f"data: {json.dumps({'type': 'cards', 'cards': cards})}\n\n"
 
                 for text in tarot_service.get_daily_reading_stream(question, cards, reader_style):
@@ -184,7 +233,9 @@ def daily_tarot():
 
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
             except Exception as e:
-                yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                credit_status = user_service.refund_query_credit(user_id, usage['operation_id'])
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': credit_status['query_credits']})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'error': str(e), 'query_credits': credit_status['query_credits']})}\n\n"
 
         return Response(generate(), mimetype='text/event-stream')
 
@@ -196,6 +247,7 @@ def daily_tarot():
 
 
 @reading_bp.route('/follow-up', methods=['POST'])
+@require_auth
 def follow_up():
     """
     基于当前牌面继续追问（流式）
@@ -223,12 +275,27 @@ def follow_up():
                 'error': '缺少原始问题、牌面或解读内容'
             }), 400
 
+        cards = tarot_service.normalize_drawn_cards(spread_id, cards, custom_spread)
+
+        user_id = request.current_user['id']
         client_ip = request.remote_addr
         user_agent = request.headers.get('User-Agent')
+        usage, error_response, status_code = _consume_query(
+            '/api/reading/follow-up',
+            {
+                'spread_id': spread_id,
+                'question_length': len(followup_question),
+                'card_count': len(cards)
+            }
+        )
+        if error_response:
+            return error_response, status_code
 
         def generate():
             answer_parts = []
             try:
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': usage['query_credits']})}\n\n"
+
                 for text in tarot_service.get_followup_stream(
                     original_question,
                     spread_id,
@@ -258,7 +325,9 @@ def follow_up():
 
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
             except Exception as e:
-                yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+                credit_status = user_service.refund_query_credit(user_id, usage['operation_id'])
+                yield f"data: {json.dumps({'type': 'balance', 'query_credits': credit_status['query_credits']})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'error': str(e), 'query_credits': credit_status['query_credits']})}\n\n"
 
         return Response(generate(), mimetype='text/event-stream')
 
@@ -270,6 +339,7 @@ def follow_up():
 
 
 @reading_bp.route('/recommend-spread', methods=['POST'])
+@require_auth
 def recommend_spread():
     """
     智能推荐牌阵 API
@@ -299,12 +369,26 @@ def recommend_spread():
                 'success': False,
                 'error': error_msg
             }), 400
+
+        usage, error_response, status_code = _consume_query(
+            '/api/reading/recommend-spread',
+            {
+                'question_length': len(question)
+            }
+        )
+        if error_response:
+            return error_response, status_code
         
         # 获取推荐
-        recommendation = spread_recommender.recommend(question)
+        try:
+            recommendation = spread_recommender.recommend(question)
+        except Exception:
+            user_service.refund_query_credit(request.current_user['id'], usage['operation_id'])
+            raise
         
         return jsonify({
             'success': True,
+            'query_credits': usage['query_credits'],
             **recommendation
         })
     

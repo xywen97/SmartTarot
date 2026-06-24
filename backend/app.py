@@ -6,6 +6,7 @@ from api.reading import reading_bp
 from api.data import data_bp
 from api.divination import divination_bp
 from api.auth import auth_bp
+from api.billing import billing_bp
 
 
 def create_app():
@@ -29,6 +30,7 @@ def create_app():
     app.register_blueprint(data_bp)
     app.register_blueprint(divination_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(billing_bp)
     
     # 健康检查端点
     @app.route('/health', methods=['GET'])
@@ -50,7 +52,8 @@ def create_app():
                 'interpret': '/api/reading/interpret',
                 'deck': '/api/data/deck',
                 'spreads': '/api/data/spreads',
-                'auth': '/api/auth/login'
+                'auth': '/api/auth/login',
+                'billing': '/api/billing/status'
             }
         })
     

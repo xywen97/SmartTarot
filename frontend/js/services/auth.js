@@ -76,4 +76,9 @@ export async function syncHistory() {
 function persistSession(user, token) {
   localStorage.setItem(CONFIG.STORAGE_KEY_AUTH_TOKEN, token);
   localStorage.setItem(CONFIG.STORAGE_KEY_AUTH_USER, JSON.stringify(user));
+  if (typeof user?.query_credits === 'number') {
+    window.dispatchEvent(new CustomEvent('billing:balance', {
+      detail: { queryCredits: user.query_credits }
+    }));
+  }
 }

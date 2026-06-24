@@ -82,6 +82,44 @@ class TarotService:
                 result.append(card_dict)
         
         return result
+
+    def normalize_drawn_cards(self, spread_id, cards, custom_spread=None):
+        """
+        只信任客户端传回的牌 ID 和正逆位，其他牌义字段全部由服务端牌库重建。
+        这样可以避免用户篡改 cards payload 向 Prompt 注入任意内容。
+        """
+        spread = self._resolve_spread(spread_id, custom_spread)
+        if not isinstance(cards, list) or len(cards) != spread.cards:
+            raise ValueError(f"牌面数量必须为 {spread.cards} 张")
+
+        normalized = []
+        seen_ids = set()
+        for card_data in cards:
+            if not isinstance(card_data, dict):
+                raise ValueError("卡牌信息格式错误")
+
+            try:
+                card_id = int(card_data.get('id'))
+            except (TypeError, ValueError):
+                raise ValueError("卡牌 ID 无效")
+
+            if card_id in seen_ids:
+                raise ValueError("卡牌不能重复")
+            seen_ids.add(card_id)
+
+            orientation = card_data.get('orientation')
+            if orientation not in ('upright', 'reversed'):
+                raise ValueError("卡牌正逆位无效")
+
+            card = get_card_by_id(card_id)
+            if not card:
+                raise ValueError("卡牌不存在")
+
+            clean_card = card.to_dict()
+            clean_card['orientation'] = orientation
+            normalized.append(clean_card)
+
+        return normalized
     
     def build_prompt(self, question, spread_id, cards, custom_spread=None, reader_style=None):
         """

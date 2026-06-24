@@ -4,6 +4,8 @@
 import { askFollowUp, startDailyTarot, startReading } from './services/reading.js';
 import { getHistory, getVisibleHistoryCount, deleteHistory, hideAllHistory, updateJournal, toggleFavorite as toggleHistoryFavorite } from './services/history.js';
 import { getCurrentUser, isLoggedIn, login, logout, register, syncHistory } from './services/auth.js';
+import { createRechargeOrder, formatAmount, loadBillingStatus } from './services/billing.js';
+import apiClient from './api/client.js';
 import { appendText, clearOutput, getOutputText, resetOutput } from './ui/loading.js';
 import { clearCards } from './ui/card.js';
 import { shareReading } from './utils/share.js';
@@ -18,6 +20,12 @@ let deckCache = [];
 let activeJournalId = null;
 let authMode = 'login';
 let gateAuthMode = 'login';
+let billingState = {
+  queryCredits: null,
+  packages: [],
+  selectedPackageId: 'starter',
+  selectedProvider: 'wechat'
+};
 
 /**
  * 初始化应用
@@ -31,6 +39,7 @@ async function init() {
   // 设置事件监听器
   setupEventListeners();
   updateAuthUI();
+  refreshBillingStatus();
   
   console.log('✅ 系统已就绪');
 }
@@ -64,6 +73,11 @@ function setupEventListeners() {
   const authToggle = document.getElementById('auth-toggle');
   if (authToggle) {
     authToggle.addEventListener('click', showAuthModal);
+  }
+
+  const creditToggle = document.getElementById('credit-toggle');
+  if (creditToggle) {
+    creditToggle.addEventListener('click', showAuthModal);
   }
 
   // 分享按钮
@@ -201,6 +215,12 @@ function setupEventListeners() {
   document.getElementById('gate-auth-submit')?.addEventListener('click', () => handleAuthSubmit('gate'));
   document.getElementById('sync-now-btn')?.addEventListener('click', handleSyncNow);
   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+  document.getElementById('create-recharge-order')?.addEventListener('click', handleCreateRechargeOrder);
+  document.querySelectorAll('.payment-method').forEach((button) => {
+    button.addEventListener('click', handlePaymentMethodClick);
+  });
+  window.addEventListener('billing:balance', handleBalanceEvent);
+  window.addEventListener('billing:recharge-required', handleRechargeRequired);
   document.querySelectorAll('.password-toggle').forEach((button) => {
     button.addEventListener('click', handlePasswordToggle);
   });
@@ -300,6 +320,149 @@ function activateFollowUpPanel() {
   if (panel) {
     panel.classList.remove('hidden');
   }
+}
+
+async function refreshBillingStatus() {
+  if (!isLoggedIn()) {
+    billingState = {
+      ...billingState,
+      queryCredits: null,
+      packages: []
+    };
+    renderBillingUI();
+    return;
+  }
+
+  try {
+    const status = await loadBillingStatus();
+    billingState = {
+      ...billingState,
+      queryCredits: status.query_credits,
+      packages: status.recharge_packages || []
+    };
+
+    if (!billingState.packages.some(pkg => pkg.id === billingState.selectedPackageId)) {
+      billingState.selectedPackageId = billingState.packages[0]?.id || 'starter';
+    }
+
+    renderBillingUI();
+  } catch (error) {
+    console.warn('查询余量加载失败:', error);
+    renderBillingUI();
+  }
+}
+
+function handleBalanceEvent(event) {
+  billingState.queryCredits = event.detail.queryCredits;
+  renderBillingUI();
+}
+
+function handleRechargeRequired(event) {
+  billingState.queryCredits = event.detail.query_credits ?? billingState.queryCredits;
+  renderBillingUI();
+  showAuthModal();
+  setAuthStatus('可用查询次数不足，请选择套餐充值后继续使用。');
+}
+
+function renderBillingUI() {
+  const creditToggle = document.getElementById('credit-toggle');
+  const creditCount = document.getElementById('billing-credit-count');
+  const packages = document.getElementById('billing-packages');
+
+  const label = typeof billingState.queryCredits === 'number'
+    ? `余量 ${billingState.queryCredits}`
+    : '余量 --';
+
+  if (creditToggle) {
+    creditToggle.textContent = label;
+    creditToggle.classList.toggle('is-empty', billingState.queryCredits === 0);
+  }
+
+  if (creditCount) {
+    creditCount.textContent = typeof billingState.queryCredits === 'number'
+      ? String(billingState.queryCredits)
+      : '--';
+  }
+
+  if (!packages) return;
+
+  if (!billingState.packages.length) {
+    packages.innerHTML = '<div class="billing-empty">登录后加载充值套餐</div>';
+    return;
+  }
+
+  packages.innerHTML = billingState.packages.map(pkg => `
+    <button type="button" class="billing-package ${pkg.id === billingState.selectedPackageId ? 'active' : ''}" data-package-id="${pkg.id}">
+      <strong>${pkg.name}</strong>
+      <span>${pkg.credits} 次 · ${formatAmount(pkg.amount_cents)}</span>
+    </button>
+  `).join('');
+
+  packages.querySelectorAll('.billing-package').forEach((button) => {
+    button.addEventListener('click', () => {
+      billingState.selectedPackageId = button.dataset.packageId;
+      hideRechargeOrder();
+      renderBillingUI();
+    });
+  });
+
+  document.querySelectorAll('.payment-method').forEach((button) => {
+    button.classList.toggle('active', button.dataset.provider === billingState.selectedProvider);
+  });
+}
+
+function handlePaymentMethodClick(event) {
+  billingState.selectedProvider = event.currentTarget.dataset.provider;
+  hideRechargeOrder();
+  renderBillingUI();
+}
+
+async function handleCreateRechargeOrder() {
+  if (!isLoggedIn()) {
+    showAuthModal();
+    setAuthStatus('请先登录后再充值。');
+    return;
+  }
+
+  const button = document.getElementById('create-recharge-order');
+  button.disabled = true;
+  button.textContent = '生成中...';
+  setAuthStatus('正在创建充值订单...');
+
+  try {
+    const order = await createRechargeOrder(billingState.selectedPackageId, billingState.selectedProvider);
+    renderRechargeOrder(order);
+    setAuthStatus('订单已创建，当前为微信/支付宝扫码接口占位。');
+  } catch (error) {
+    setAuthStatus(error.message || '创建订单失败');
+  } finally {
+    button.disabled = false;
+    button.textContent = '生成扫码订单';
+  }
+}
+
+function renderRechargeOrder(order) {
+  const container = document.getElementById('recharge-order');
+  if (!container) return;
+
+  const providerName = order.provider === 'wechat' ? '微信支付' : '支付宝';
+  container.classList.remove('hidden');
+  container.innerHTML = `
+    <div class="qr-placeholder">${providerName}</div>
+    <div class="order-detail">
+      <strong>${order.credits} 次查询 · ${formatAmount(order.amount_cents)}</strong>
+      <span>订单号：${order.order_no}</span>
+      <small>${order.qr_code_url}</small>
+    </div>
+  `;
+}
+
+function hideRechargeOrder() {
+  const container = document.getElementById('recharge-order');
+  if (!container) return;
+
+  container.classList.add('hidden');
+  container.innerHTML = '';
 }
 
 /**
@@ -491,15 +654,7 @@ async function handleRecommendClick() {
   recommendBtn.textContent = '分析中...';
 
   try {
-    const response = await fetch(`${CONFIG.API_BASE_URL}/api/reading/recommend-spread`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ question })
-    });
-
-    const data = await response.json();
+    const data = await apiClient.post('/api/reading/recommend-spread', { question });
 
     if (data.success) {
       // 设置推荐的牌阵
@@ -691,6 +846,7 @@ async function handleAuthSubmit(scope = 'modal') {
     }
 
     updateAuthUI();
+    await refreshBillingStatus();
     resetReadingState();
     clearAuthForm(scope);
     renderHistoryList(document.getElementById('history-search')?.value || '');
@@ -740,6 +896,9 @@ async function handleSyncNow() {
 
 function handleLogout() {
   logout();
+  billingState.queryCredits = null;
+  billingState.packages = [];
+  hideRechargeOrder();
   resetReadingState();
   clearAuthForm('all');
   setAuthMode('login');

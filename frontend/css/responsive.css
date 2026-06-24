@@ -157,6 +157,20 @@
     font-size: 0.85rem;
   }
 
+  .credit-toggle {
+    min-width: 72px;
+    padding: 7px 10px;
+    font-size: 0.85rem;
+  }
+
+  .billing-packages {
+    grid-template-columns: 1fr;
+  }
+
+  .recharge-order {
+    grid-template-columns: 1fr;
+  }
+
   header {
     padding: 10px;
   }

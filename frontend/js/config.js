@@ -9,7 +9,7 @@
  */
 function resolveApiBaseUrl() {
   const { protocol, hostname, port } = window.location;
-  const devPorts = new Set(['8080', '3000']);
+  const devPorts = new Set(['8080', '8081', '3000']);
 
   if (devPorts.has(port)) {
     return `${protocol}//${hostname}:5001`;

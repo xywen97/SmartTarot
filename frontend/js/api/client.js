@@ -7,15 +7,62 @@ class APIClient {
   constructor() {
     this.baseURL = CONFIG.API_BASE_URL;
   }
+
+  headers({ json = false } = {}) {
+    const headers = {};
+    const token = localStorage.getItem(CONFIG.STORAGE_KEY_AUTH_TOKEN);
+
+    if (json) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
+  }
+
+  async parseError(response) {
+    try {
+      const data = await response.json();
+      if (data && typeof data === 'object') {
+        this.emitBalance(data.query_credits);
+        if (data.recharge_required) {
+          window.dispatchEvent(new CustomEvent('billing:recharge-required', { detail: data }));
+        }
+        const error = new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+        error.status = response.status;
+        error.data = data;
+        return error;
+      }
+    } catch (e) {
+      // Fall through to the generic HTTP error below.
+    }
+
+    const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+    error.status = response.status;
+    return error;
+  }
+
+  emitBalance(queryCredits) {
+    if (typeof queryCredits === 'number') {
+      window.dispatchEvent(new CustomEvent('billing:balance', {
+        detail: { queryCredits }
+      }));
+    }
+  }
   
   /**
    * GET 请求
    */
   async get(endpoint) {
     try {
-      const response = await fetch(`${this.baseURL}${endpoint}`);
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        headers: this.headers()
+      });
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw await this.parseError(response);
       }
       return await response.json();
     } catch (error) {
@@ -31,17 +78,17 @@ class APIClient {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: this.headers({ json: true }),
         body: JSON.stringify(data)
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw await this.parseError(response);
       }
       
-      return await response.json();
+      const payload = await response.json();
+      this.emitBalance(payload.query_credits);
+      return payload;
     } catch (error) {
       console.error('POST 请求失败:', error);
       throw error;
@@ -55,14 +102,13 @@ class APIClient {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: this.headers({ json: true }),
         body: JSON.stringify(data)
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const error = await this.parseError(response);
+        throw error;
       }
       
       const reader = response.body.getReader();
@@ -87,10 +133,16 @@ class APIClient {
                 onChunk(parsed.text);
               } else if (parsed.type === 'cards') {
                 onChunk(parsed);
+              } else if (parsed.type === 'balance') {
+                this.emitBalance(parsed.query_credits);
               } else if (parsed.type === 'done') {
                 if (onDone) onDone();
               } else if (parsed.type === 'error') {
-                if (onError) onError(parsed.error);
+                this.emitBalance(parsed.query_credits);
+                if (parsed.recharge_required) {
+                  window.dispatchEvent(new CustomEvent('billing:recharge-required', { detail: parsed }));
+                }
+                if (onError) onError(parsed.error, parsed);
               }
             } catch (e) {
               console.error('解析 SSE 数据失败:', e);

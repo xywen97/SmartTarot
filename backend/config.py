@@ -48,6 +48,10 @@ class Config:
         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'instance', 'tarot.db'))
     )
     AUTH_TOKEN_MAX_AGE = int(os.getenv('AUTH_TOKEN_MAX_AGE', str(7 * 24 * 60 * 60)))
+    FREE_QUERY_CREDITS = int(os.getenv('FREE_QUERY_CREDITS', '3'))
+
+    # 支付回调签名配置。未接入真实微信/支付宝前保持为空，回调接口会拒绝入账。
+    PAYMENT_NOTIFY_SECRET = os.getenv('PAYMENT_NOTIFY_SECRET', '').strip()
     
     @classmethod
     def validate(cls):

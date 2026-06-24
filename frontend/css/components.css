@@ -746,8 +746,25 @@
   box-shadow: var(--shadow-glow);
 }
 
+.credit-toggle {
+  min-width: 86px;
+  padding: 9px 14px;
+  background: var(--color-bg-card);
+  border: 2px solid rgba(255, 215, 0, 0.72);
+  border-radius: 999px;
+  color: var(--color-gold);
+  cursor: pointer;
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-glow);
+}
+
+.credit-toggle.is-empty {
+  color: var(--color-accent-secondary);
+  border-color: var(--color-accent-secondary);
+}
+
 .auth-modal-content {
-  max-width: 520px;
+  max-width: 620px;
 }
 
 .auth-form-panel,
@@ -838,6 +855,147 @@
 
 #auth-user-info strong {
   color: var(--color-gold);
+}
+
+#auth-user-info span,
+#auth-user-info small {
+  display: block;
+  margin-top: 4px;
+}
+
+.billing-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--color-bg-primary);
+  border: 1px solid rgba(255, 215, 0, 0.44);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.billing-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-secondary);
+}
+
+.billing-summary strong {
+  color: var(--color-gold);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.billing-packages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.billing-package,
+.payment-method {
+  border: 1px solid var(--color-accent-primary);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.billing-package {
+  min-height: 72px;
+  padding: 10px;
+  text-align: left;
+}
+
+.billing-package strong,
+.billing-package span {
+  display: block;
+}
+
+.billing-package strong {
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.billing-package span {
+  font-size: 0.86rem;
+}
+
+.billing-package.active,
+.payment-method.active {
+  border-color: var(--color-gold);
+  color: var(--color-text-primary);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.18);
+}
+
+.payment-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.payment-method {
+  padding: 10px;
+}
+
+.billing-empty {
+  grid-column: 1 / -1;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.recharge-order {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px dashed rgba(255, 215, 0, 0.55);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+}
+
+.qr-placeholder {
+  width: 96px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(90deg, rgba(255, 215, 0, 0.2) 50%, transparent 0) 0 0 / 16px 16px,
+    linear-gradient(rgba(157, 78, 221, 0.22) 50%, transparent 0) 0 0 / 16px 16px,
+    var(--color-bg-card);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.order-detail {
+  min-width: 0;
+}
+
+.order-detail strong,
+.order-detail span,
+.order-detail small {
+  display: block;
+}
+
+.order-detail strong {
+  color: var(--color-gold);
+  margin-bottom: 6px;
+}
+
+.order-detail span,
+.order-detail small {
+  overflow-wrap: anywhere;
+}
+
+.order-detail small {
+  margin-top: 6px;
+  color: var(--color-text-muted);
 }
 
 .auth-status {

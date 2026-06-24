@@ -52,6 +52,7 @@
   </section>
 
   <div class="top-actions">
+    <button class="credit-toggle" id="credit-toggle" title="查询余量">余量 --</button>
     <button class="theme-toggle" id="theme-toggle" title="切换主题">☀️</button>
     <button class="auth-toggle" id="auth-toggle" title="登录与云同步">登录</button>
   </div>
@@ -249,6 +250,19 @@
       <div class="modal-body">
         <div class="auth-user-panel hidden" id="auth-user-panel">
           <div id="auth-user-info"></div>
+          <div class="billing-panel" id="billing-panel">
+            <div class="billing-summary">
+              <span>可用查询次数</span>
+              <strong id="billing-credit-count">--</strong>
+            </div>
+            <div class="billing-packages" id="billing-packages"></div>
+            <div class="payment-methods" id="payment-methods">
+              <button type="button" class="payment-method active" data-provider="wechat">微信</button>
+              <button type="button" class="payment-method" data-provider="alipay">支付宝</button>
+            </div>
+            <button class="btn btn-secondary" id="create-recharge-order">生成扫码订单</button>
+            <div class="recharge-order hidden" id="recharge-order"></div>
+          </div>
           <div class="auth-actions">
             <button class="btn" id="sync-now-btn">立即同步</button>
             <button class="btn btn-secondary" id="logout-btn">退出登录</button>

@@ -139,9 +139,20 @@ python3 -m http.server 8080
 - `GET /api/data/deck` - 获取塔罗牌库
 - `GET /api/data/spreads` - 获取牌阵列表
 
+### 用户余量与充值
+- `GET /api/billing/status` - 获取当前用户查询余量与套餐
+- `POST /api/billing/recharge/orders` - 创建微信/支付宝扫码充值订单占位
+- `POST /api/billing/recharge/notify` - 预留支付服务端回调入口
+
 ### 系统
 - `GET /health` - 健康检查
 - `GET /` - API 信息
+
+## 💳 查询余量配置
+
+每个新用户默认获得 3 次免费查询，可通过 `FREE_QUERY_CREDITS` 调整。所有会触发 AI 解读的接口都必须携带登录 token，由后端按用户 ID 原子扣减，前端只展示余额。
+
+真实接入微信/支付宝时，在服务端下单逻辑中替换当前 `payment://...` 占位二维码，并设置 `PAYMENT_NOTIFY_SECRET` 用于回调签名验证。
 
 ## 🎯 重构优势
 
